@@ -1,25 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* Light mode colors */
-  --background: #ffffff;
+  /* Modern color palette */
+  --background: #fafbfc;
   --foreground: #171717;
   --card-bg: #ffffff;
   --border: #e5e7eb;
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
-}
-
-.dark {
-  /* Dark mode colors */
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card-bg: #1a1a1a;
-  --border: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
+  
+  /* Gradient colors */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 @theme inline {
@@ -30,21 +24,50 @@
 }
 
 body {
-  background-color: var(--background);
+  background: linear-gradient(to bottom, #f8fafc 0%, #f1f5f9 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Ensure dark mode applies to body */
-.dark body {
-  background-color: var(--background);
-  color: var(--foreground);
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-/* Smooth transitions for theme changes */
-* {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }

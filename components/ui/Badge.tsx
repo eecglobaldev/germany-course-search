@@ -21,11 +21,11 @@ export default function Badge({
   const baseClasses = 'inline-flex items-center font-medium rounded-full border backdrop-blur-sm';
   
   const variantClasses = {
-    default: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700',
-    success: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700',
-    warning: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700',
-    info: 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-700',
-    gray: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700',
+    default: 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 border-blue-200/50 shadow-sm hover:shadow-md transition-shadow',
+    success: 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200/50 shadow-sm hover:shadow-md transition-shadow',
+    warning: 'bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-200/50 shadow-sm hover:shadow-md transition-shadow',
+    info: 'bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 border-teal-200/50 shadow-sm hover:shadow-md transition-shadow',
+    gray: 'bg-gradient-to-r from-gray-50 to-slate-50 text-gray-700 border-gray-200/50 shadow-sm hover:shadow-md transition-shadow',
   };
   
   const sizeClasses = {

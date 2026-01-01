@@ -189,9 +189,16 @@ export function sortCourses(
         const bTuition = b.tuitionAmountApprox ?? Infinity;
         comparison = aTuition - bTuition;
         break;
+      case 'grade':
+        // German grading: lower is better (1.0 = excellent, 3.0 = minimum passing)
+        // Sort courses with lower grade requirements first
+        const aGrade = a.minGrade ?? Infinity;
+        const bGrade = b.minGrade ?? Infinity;
+        comparison = aGrade - bGrade;
+        break;
       case 'relevance':
       default:
-        // Relevance sorting would be handled by search
+        // Relevance sorting would be handled by search - keep original order
         comparison = 0;
         break;
     }

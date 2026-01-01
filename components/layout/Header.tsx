@@ -1,69 +1,48 @@
 /**
  * Header Component
- * Premium glassmorphism navbar with theme toggle
+ * Premium glassmorphism navbar
  */
 
 'use client';
 
 import React from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from '@/components/providers/ThemeProvider';
 
 interface HeaderProps {
   resultsCount?: number;
 }
 
 export default function Header({ resultsCount }: HeaderProps) {
-  const { theme, toggleTheme } = useTheme();
-
-  const handleClick = () => {
-    console.log('Button clicked, current theme:', theme);
-    toggleTheme();
-    console.log('After toggleTheme call');
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+    <header className="sticky top-0 z-50 glass border-b border-white/20 shadow-lg backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Title */}
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Study in Germany
-            </h1>
-            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-20"></div>
+              <h1 className="relative text-xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Study in Germany
+              </h1>
+            </div>
+            <span className="text-sm text-gray-600 font-medium hidden sm:inline">
               Course Explorer
             </span>
           </div>
 
-          {/* Right side: Results Count + Theme Toggle */}
+          {/* Right side: Results Count */}
           <div className="flex items-center gap-6">
             {/* Results Count */}
             {resultsCount !== undefined && (
-              <div className="hidden sm:flex items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold text-gray-900 dark:text-white">{resultsCount.toLocaleString()}</span>
-                  {' '}courses
+              <div className="hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-100">
+                <span className="text-sm text-gray-700">
+                  <span className="font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    {resultsCount.toLocaleString()}
+                  </span>
+                  {' '}
+                  <span className="text-gray-600">courses</span>
                 </span>
               </div>
             )}
-
-            {/* Theme Toggle */}
-            <button
-              type="button"
-              onClick={handleClick}
-              className="relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 group cursor-pointer"
-              aria-label="Toggle theme"
-            >
-              <div className="relative w-5 h-5 pointer-events-none">
-                <Sun 
-                  className="absolute inset-0 w-5 h-5 text-gray-700 dark:text-gray-300 transition-all duration-300 rotate-0 scale-100 opacity-100 dark:rotate-90 dark:scale-0 dark:opacity-0"
-                />
-                <Moon 
-                  className="absolute inset-0 w-5 h-5 text-gray-700 dark:text-gray-300 transition-all duration-300 -rotate-90 scale-0 opacity-0 dark:rotate-0 dark:scale-100 dark:opacity-100"
-                />
-              </div>
-            </button>
           </div>
         </div>
       </div>

@@ -19,14 +19,17 @@ export default function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="text-center py-12 px-4">
-      <div className="text-gray-400 dark:text-gray-600 text-6xl mb-4">🔍</div>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">{message}</p>
+    <div className="text-center py-16 px-4">
+      <div className="relative inline-block mb-6">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
+        <div className="relative text-7xl">🔍</div>
+      </div>
+      <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3">{title}</h3>
+      <p className="text-gray-600 mb-8 max-w-md mx-auto text-lg">{message}</p>
       {onAction && (
         <button
           onClick={onAction}
-          className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
         >
           {actionLabel}
         </button>

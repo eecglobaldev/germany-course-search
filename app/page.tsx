@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useCourseData } from '@/hooks/useCourseData';
 import { useCourseFilters } from '@/hooks/useCourseFilters';
 import { usePagination } from '@/hooks/usePagination';
@@ -13,6 +13,7 @@ import { filterCourses, sortCourses } from '@/lib/filters';
 import { searchCourses } from '@/lib/search';
 import Sidebar from '@/components/layout/Sidebar';
 import SearchBar from '@/components/filters/SearchBar';
+import SortDropdown from '@/components/filters/SortDropdown';
 import MultiSelectFilter from '@/components/filters/MultiSelectFilter';
 import EnglishExamFilter from '@/components/filters/EnglishExamFilter';
 import GradeFilter from '@/components/filters/GradeFilter';
@@ -49,11 +50,53 @@ export default function Home() {
     setTOEFLCbtScore,
     setTOEICScore,
     setGradeScore,
+    setSort,
     resetFilters, 
     setPage 
   } = useCourseFilters();
   const [selectedCourse, setSelectedCourse] = useState<ProcessedCourse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const mainContentRef = useRef<HTMLElement>(null);
+
+  // Function to scroll to top - multiple attempts to ensure it works
+  const scrollToTop = () => {
+    // Immediate scroll (instant) - set scrollTop directly
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+    }
+    // Also scroll window immediately
+    window.scrollTo({ top: 0 });
+    
+    // Smooth scroll after a tiny delay
+    requestAnimationFrame(() => {
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Additional scroll after DOM update (in case content is still loading)
+    setTimeout(() => {
+      if (mainContentRef.current) {
+        mainContentRef.current.scrollTop = 0;
+        mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  // Handler for page change with scroll
+  const handlePageChange = (newPage: number) => {
+    // Scroll immediately before page change
+    scrollToTop();
+    // Then change the page
+    setPage(newPage);
+    // Scroll again after page change
+    setTimeout(() => {
+      scrollToTop();
+    }, 50);
+  };
 
   const handleExpandCourse = (course: ProcessedCourse) => {
     setSelectedCourse(course);
@@ -100,8 +143,8 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading courses...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading courses...</p>
         </div>
       </div>
     );
@@ -112,13 +155,13 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-md">
-          <div className="text-red-600 dark:text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="text-red-600 text-5xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Error Loading Courses
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">{error.message}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500">
-            Make sure <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-900 dark:text-gray-100">courses_processed.json</code> exists in the public directory.
+          <p className="text-gray-600 mb-4">{error.message}</p>
+          <p className="text-sm text-gray-500">
+            Make sure <code className="bg-gray-100 px-2 py-1 rounded text-gray-900">courses_processed.json</code> exists in the public directory.
           </p>
         </div>
       </div>
@@ -126,9 +169,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]">
+    <div className="flex h-[calc(100vh-4rem)] relative">
       {/* Sidebar */}
-      <Sidebar>
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
         <div className="space-y-4">
           {/* Degree Level Filter */}
           <MultiSelectFilter
@@ -214,7 +257,7 @@ export default function Home() {
 
           <button
             onClick={resetFilters}
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Reset Filters
           </button>
@@ -222,8 +265,32 @@ export default function Home() {
       </Sidebar>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main ref={mainContentRef} className="flex-1 w-full lg:w-auto overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Mobile Filter Toggle Button - Always visible on mobile */}
+          <div className="mb-6 lg:hidden sticky top-4 z-30">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
+            >
+              {isSidebarOpen ? (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Close Filters
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  Open Filters
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Search Bar */}
           <div className="mb-6">
             <SearchBar
@@ -233,20 +300,29 @@ export default function Home() {
             />
           </div>
 
-          {/* Results Info */}
-          <div className="mb-6 flex items-center justify-between">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Showing <span className="font-semibold text-gray-900 dark:text-white">{filteredCourses.length.toLocaleString()}</span> of{' '}
-              <span className="font-semibold text-gray-900 dark:text-white">{totalCount.toLocaleString()}</span> courses
-            </p>
-            {filteredCourses.length === 0 && (
-              <button
-                onClick={resetFilters}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-              >
-                Clear filters
-              </button>
-            )}
+          {/* Sort Dropdown and Results Info */}
+          <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <SortDropdown
+                value={filters.sortBy}
+                sortOrder={filters.sortOrder}
+                onChange={(sortBy, sortOrder) => setSort(sortBy, sortOrder)}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-gray-600">
+                Showing <span className="font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">{filteredCourses.length.toLocaleString()}</span> of{' '}
+                <span className="font-bold text-gray-900">{totalCount.toLocaleString()}</span> courses
+              </p>
+              {filteredCourses.length === 0 && (
+                <button
+                  onClick={resetFilters}
+                  className="text-sm font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Course Grid */}
@@ -278,7 +354,7 @@ export default function Home() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage(filters.page - 1)}
+                      onClick={() => handlePageChange(filters.page - 1)}
                       disabled={!pagination.canGoPrev}
                     >
                       Previous
@@ -299,7 +375,7 @@ export default function Home() {
                         return (
                           <button
                             key={pageNum}
-                            onClick={() => setPage(pageNum)}
+                            onClick={() => handlePageChange(pageNum)}
                             className={`px-3 py-1 text-sm rounded ${
                               filters.page === pageNum
                                 ? 'bg-blue-600 text-white'
@@ -314,7 +390,7 @@ export default function Home() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage(filters.page + 1)}
+                      onClick={() => handlePageChange(filters.page + 1)}
                       disabled={!pagination.canGoNext}
                     >
                       Next

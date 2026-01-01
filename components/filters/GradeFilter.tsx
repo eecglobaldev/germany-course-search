@@ -44,30 +44,30 @@ export default function GradeFilter({
     : 'Minimum Grade';
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-4 relative">
+    <div className="border-b border-white/20 pb-4 mb-4 relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between text-left"
+        className="w-full flex items-center justify-between text-left group hover:bg-white/30 rounded-lg p-2 -m-2 transition-all duration-300"
       >
-        <span className="text-sm font-semibold text-gray-900 dark:text-white">
+        <span className="text-sm font-semibold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
           {displayText}
         </span>
-        <ChevronDown className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-500 group-hover:text-purple-600 transition-all duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="mt-2">
-          <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
+        <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
             {gradeOptions.map((grade) => {
               const isSelected = selectedValue === grade;
               return (
                 <button
                   key={grade}
                   onClick={() => handleGradeClick(grade)}
-                  className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
+                  className={`w-full h-10 flex items-center justify-center text-sm font-medium rounded-lg border-2 transition-all duration-300 transform hover:scale-105 ${
                     isSelected
-                      ? 'bg-blue-600 dark:bg-blue-500 text-white border-blue-600 dark:border-blue-500'
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500'
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white border-transparent shadow-lg'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:border-purple-300 shadow-sm hover:shadow-md'
                   }`}
                 >
                   {grade}
@@ -78,7 +78,7 @@ export default function GradeFilter({
           {selectedValue !== undefined && (
             <button
               onClick={handleClear}
-              className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+              className="mt-3 text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
             >
               Clear selection
             </button>

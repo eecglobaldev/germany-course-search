@@ -3,7 +3,7 @@
  * Based on FRONTEND_IMPLEMENTATION_PLAN.md Section 4.1
  */
 
-export type SortBy = 'relevance' | 'name' | 'university' | 'city' | 'duration' | 'tuition';
+export type SortBy = 'relevance' | 'name' | 'grade' | 'university' | 'city' | 'duration' | 'tuition';
 export type SortOrder = 'asc' | 'desc';
 export type TuitionFilter = 'all' | 'free' | 'paid';
 

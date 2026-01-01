@@ -48,25 +48,28 @@ export default function SearchBar({
   };
 
   return (
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+    <div className="relative group">
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-gray-400 group-hover:text-purple-500 transition-colors duration-300" />
+        </div>
+        <input
+          type="text"
+          value={localValue}
+          onChange={(e) => handleChange(e.target.value)}
+          placeholder={placeholder}
+          className="block w-full pl-12 pr-12 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/80 backdrop-blur-sm text-gray-900 placeholder:text-gray-400 shadow-lg hover:shadow-xl transition-all duration-300 focus:bg-white"
+        />
+        {localValue && (
+          <button
+            onClick={handleClear}
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-purple-600 transition-colors duration-300"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
-      <input
-        type="text"
-        value={localValue}
-        onChange={(e) => handleChange(e.target.value)}
-        placeholder={placeholder}
-        className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
-      />
-      {localValue && (
-        <button
-          onClick={handleClear}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      )}
     </div>
   );
 }

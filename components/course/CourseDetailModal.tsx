@@ -21,20 +21,22 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
   if (!isOpen || !course) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[100] overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity z-[100]"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="flex min-h-full items-start justify-center pt-24 px-4 pb-4 relative z-[101]">
+        <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100vh-8rem)] overflow-y-auto border border-white/20 backdrop-blur-xl">
+          {/* Gradient border effect */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-pink-500/20 opacity-0 hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl"></div>
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-start justify-between">
+          <div className="sticky top-0 bg-gradient-to-r from-white to-purple-50/30 border-b border-gray-200/50 px-6 py-5 flex items-start justify-between backdrop-blur-sm shadow-sm">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3">
                 {course.courseName}
               </h2>
               <div className="flex items-center gap-4 text-sm text-gray-600">
