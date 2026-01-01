@@ -48,15 +48,15 @@ export default function EnglishExamFilter({
     : title;
 
   return (
-    <div className="border-b border-white/20 pb-4 mb-4 relative">
+    <div className="border-b border-[var(--border-color)] pb-4 mb-4 relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between text-left group hover:bg-white/30 rounded-lg p-2 -m-2 transition-all duration-300"
+        className="w-full flex items-center justify-between text-left group hover:bg-white/30 dark:hover:bg-slate-700/30 rounded-lg p-2 -m-2 transition-all duration-300"
       >
-        <span className="text-sm font-semibold text-gray-900 group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-blue-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+        <span className="text-sm font-semibold text-[var(--text-primary)] group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-blue-600 dark:group-hover:from-purple-400 dark:group-hover:to-blue-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
           {displayText}
         </span>
-        <ChevronDown className={`h-4 w-4 text-gray-500 group-hover:text-purple-600 transition-all duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-[var(--text-muted)] group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-all duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
@@ -68,11 +68,10 @@ export default function EnglishExamFilter({
                 <button
                   key={score}
                   onClick={() => handleScoreClick(score)}
-                  className={`w-full h-10 flex items-center justify-center text-sm font-medium rounded-lg border-2 transition-all duration-300 transform hover:scale-105 ${
-                    isSelected
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white border-transparent shadow-lg'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:border-purple-300 shadow-sm hover:shadow-md'
-                  }`}
+                  className={`w-full h-10 flex items-center justify-center text-sm font-medium rounded-lg border-2 transition-all duration-300 transform hover:scale-105 ${isSelected
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-500 dark:to-blue-500 text-white border-transparent shadow-lg'
+                      : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/30 dark:hover:to-blue-900/30 hover:border-purple-300 dark:hover:border-purple-500/50 shadow-sm hover:shadow-md'
+                    }`}
                 >
                   {score}
                 </button>
@@ -82,7 +81,7 @@ export default function EnglishExamFilter({
           {selectedValue !== undefined && (
             <button
               onClick={handleClear}
-              className="mt-3 text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 transition-all duration-300"
+              className="mt-3 text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 dark:hover:from-purple-300 dark:hover:to-blue-300 transition-all duration-300"
             >
               Clear selection
             </button>
@@ -92,4 +91,3 @@ export default function EnglishExamFilter({
     </div>
   );
 }
-

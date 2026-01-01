@@ -1,33 +1,160 @@
 @import "tailwindcss";
 
 :root {
-  /* Modern color palette */
-  --background: #fafbfc;
-  --foreground: #171717;
-  --card-bg: #ffffff;
-  --border: #e5e7eb;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  
-  /* Gradient colors */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  /* --- LITE MODE PALETTE (HIGH CONTRAST) --- */
+
+  /* Backgrounds */
+  --bg-body: #fafbfc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-modal: #ffffff;
+
+  /* Text - Maximized Contrast */
+  --text-primary: #030712;
+  /* Gray 950 - Pitch Black */
+  --text-secondary: #1f2937;
+  /* Gray 800 - Very Dark Gray (was 600) */
+  --text-muted: #4b5563;
+  /* Gray 600 - Medium Dark (was 400) */
+  --text-highlight: #000000;
+
+  /* Borders */
+  --border-color: #e5e7eb;
+  /* Gray 200 */
+  --border-highlight: #d1d5db;
+  /* Gray 300 */
+
+  /* Gradients */
+  --gradient-body: linear-gradient(to bottom, #f8fafc 0%, #f1f5f9 100%);
+
+  /* BADGE PALETTE - LITE (Standard Soft Colors) */
+  --badge-default-bg: #eef2ff;
+  /* indigo-50 */
+  --badge-default-text: #4338ca;
+  /* indigo-700 */
+  --badge-default-border: #c7d2fe;
+  /* indigo-200 */
+
+  --badge-success-bg: #f0fdf4;
+  /* green-50 */
+  --badge-success-text: #15803d;
+  /* green-700 */
+  --badge-success-border: #bbf7d0;
+  /* green-200 */
+
+  --badge-warning-bg: #fffbeb;
+  /* amber-50 */
+  --badge-warning-text: #b45309;
+  /* amber-700 */
+  --badge-warning-border: #fde68a;
+  /* amber-200 */
+
+  --badge-info-bg: #ecfeff;
+  /* cyan-50 */
+  --badge-info-text: #0e7490;
+  /* cyan-700 */
+  --badge-info-border: #a5f3fc;
+  /* cyan-200 */
+
+  --badge-gray-bg: #f8fafc;
+  /* slate-50 */
+  --badge-gray-text: #334155;
+  /* slate-700 */
+  --badge-gray-border: #e2e8f0;
+  /* slate-200 */
+
+  /* Special */
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --scrollbar-track: #f1f5f9;
+}
+
+.dark {
+  /* --- DARK MODE PALETTE --- */
+
+  /* Backgrounds */
+  --bg-body: #020617;
+  /* Slate 950 */
+  --bg-card: #0f172a;
+  /* Slate 900 */
+  --bg-card-hover: #1e293b;
+  /* Slate 800 */
+  --bg-glass: rgba(15, 23, 42, 0.7);
+  --bg-modal: #0f172a;
+
+  /* Text */
+  --text-primary: #f8fafc;
+  /* Slate 50 */
+  --text-secondary: #94a3b8;
+  /* Slate 400 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+  --text-highlight: #ffffff;
+
+  /* Borders */
+  --border-color: #1e293b;
+  /* Slate 800 */
+  --border-highlight: #334155;
+  /* Slate 700 */
+
+  /* Gradients */
+  --gradient-body: linear-gradient(to bottom, #020617 0%, #0f172a 100%);
+
+  /* BADGE PALETTE - DARK (Glass/Transparent) */
+  --badge-default-bg: rgba(49, 46, 129, 0.3);
+  /* indigo-900/30 */
+  --badge-default-text: #a5b4fc;
+  /* indigo-300 */
+  --badge-default-border: rgba(67, 56, 202, 0.3);
+  /* indigo-700/30 */
+
+  --badge-success-bg: rgba(6, 78, 59, 0.3);
+  /* green-900/30 */
+  --badge-success-text: #86efac;
+  /* green-300 */
+  --badge-success-border: rgba(21, 128, 61, 0.3);
+  /* green-700/30 */
+
+  --badge-warning-bg: rgba(120, 53, 15, 0.3);
+  /* amber-900/30 */
+  --badge-warning-text: #fcd34d;
+  /* amber-300 */
+  --badge-warning-border: rgba(180, 83, 9, 0.3);
+  /* amber-700/30 */
+
+  --badge-info-bg: rgba(22, 78, 99, 0.3);
+  /* cyan-900/30 */
+  --badge-info-text: #67e8f9;
+  /* cyan-300 */
+  --badge-info-border: rgba(14, 116, 144, 0.3);
+  /* cyan-700/30 */
+
+  --badge-gray-bg: rgba(30, 41, 59, 0.5);
+  /* slate-800/50 */
+  --badge-gray-text: #cbd5e1;
+  /* slate-300 */
+  --badge-gray-border: rgba(51, 65, 85, 0.5);
+  /* slate-700/50 */
+
+  /* Special */
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --scrollbar-track: #0f172a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg-body);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: linear-gradient(to bottom, #f8fafc 0%, #f1f5f9 100%);
+  background-color: var(--bg-body);
+  background-image: var(--gradient-body);
   background-attachment: fixed;
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Smooth scrolling */
@@ -42,7 +169,7 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -54,20 +181,10 @@ html {
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
-/* Shimmer animation */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* Glassmorphism utility */
+/* Glassmorphism utility - Updated to use correct variable */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
 }

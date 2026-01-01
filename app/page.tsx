@@ -21,15 +21,15 @@ import CourseGrid from '@/components/course/CourseGrid';
 import CourseDetailModal from '@/components/course/CourseDetailModal';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
-import { 
+import {
   DEGREE_LEVELS,
   STUDY_TYPES,
   STUDY_MODES,
   ADMISSION_MODES,
-  IELTS_SCORES, 
-  TOEFL_IBT_SCORES, 
-  TOEFL_PBT_SCORES, 
-  TOEFL_CBT_SCORES, 
+  IELTS_SCORES,
+  TOEFL_IBT_SCORES,
+  TOEFL_PBT_SCORES,
+  TOEFL_CBT_SCORES,
   TOEIC_SCORES,
   GRADE_OPTIONS
 } from '@/lib/constants';
@@ -37,9 +37,9 @@ import type { ProcessedCourse } from '@/types/course';
 
 export default function Home() {
   const { courses, loading, error, totalCount } = useCourseData();
-  const { 
-    filters, 
-    setSearch, 
+  const {
+    filters,
+    setSearch,
     setDegreeLevels,
     setStudyTypes,
     setStudyModes,
@@ -51,8 +51,8 @@ export default function Home() {
     setTOEICScore,
     setGradeScore,
     setSort,
-    resetFilters, 
-    setPage 
+    resetFilters,
+    setPage
   } = useCourseFilters();
   const [selectedCourse, setSelectedCourse] = useState<ProcessedCourse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function Home() {
     }
     // Also scroll window immediately
     window.scrollTo({ top: 0 });
-    
+
     // Smooth scroll after a tiny delay
     requestAnimationFrame(() => {
       if (mainContentRef.current) {
@@ -75,7 +75,7 @@ export default function Home() {
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-    
+
     // Additional scroll after DOM update (in case content is still loading)
     setTimeout(() => {
       if (mainContentRef.current) {
@@ -144,7 +144,7 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading courses...</p>
+          <p className="text-[var(--text-secondary)]">Loading courses...</p>
         </div>
       </div>
     );
@@ -156,12 +156,12 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-md">
           <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
             Error Loading Courses
           </h2>
-          <p className="text-gray-600 mb-4">{error.message}</p>
-          <p className="text-sm text-gray-500">
-            Make sure <code className="bg-gray-100 px-2 py-1 rounded text-gray-900">courses_processed.json</code> exists in the public directory.
+          <p className="text-[var(--text-secondary)] mb-4">{error.message}</p>
+          <p className="text-sm text-[var(--text-muted)]">
+            Make sure <code className="bg-[var(--bg-card)] px-2 py-1 rounded text-[var(--text-primary)]">courses_processed.json</code> exists in the public directory.
           </p>
         </div>
       </div>
@@ -213,7 +213,7 @@ export default function Home() {
           />
 
           {/* English Exam Filters */}
-          <div className="border-t border-gray-200 pt-4 mt-4">
+          <div className="border-t border-[var(--border-color)] pt-4 mt-4">
             <EnglishExamFilter
               title="IELTS"
               examType="ielts"
@@ -265,7 +265,7 @@ export default function Home() {
       </Sidebar>
 
       {/* Main Content */}
-      <main ref={mainContentRef} className="flex-1 w-full lg:w-auto overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 transition-all duration-300">
+      <main ref={mainContentRef} className="flex-1 w-full lg:w-auto overflow-y-auto bg-transparent transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Mobile Filter Toggle Button - Always visible on mobile */}
           <div className="mb-6 lg:hidden sticky top-4 z-30">
@@ -310,9 +310,9 @@ export default function Home() {
               />
             </div>
             <div className="flex items-center gap-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-[var(--text-secondary)]">
                 Showing <span className="font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">{filteredCourses.length.toLocaleString()}</span> of{' '}
-                <span className="font-bold text-gray-900">{totalCount.toLocaleString()}</span> courses
+                <span className="font-bold text-[var(--test-primary)]">{totalCount.toLocaleString()}</span> courses
               </p>
               {filteredCourses.length === 0 && (
                 <button
@@ -336,18 +336,18 @@ export default function Home() {
           ) : (
             <>
               <CourseGrid courses={paginatedCourses} onExpand={handleExpandCourse} />
-              
+
               {/* Course Detail Modal */}
               <CourseDetailModal
                 course={selectedCourse}
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
               />
-              
+
               {/* Pagination */}
               {pagination.totalPages > 1 && (
                 <div className="mt-8 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-[var(--text-secondary)]">
                     Showing {pagination.startIndex + 1} to {pagination.endIndex} of {filteredCourses.length} courses
                   </div>
                   <div className="flex gap-2">
@@ -371,16 +371,15 @@ export default function Home() {
                         } else {
                           pageNum = filters.page - 2 + i;
                         }
-                        
+
                         return (
                           <button
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
-                            className={`px-3 py-1 text-sm rounded ${
-                              filters.page === pageNum
+                            className={`px-3 py-1 text-sm rounded transition-colors ${filters.page === pageNum
                                 ? 'bg-blue-600 text-white'
-                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                            }`}
+                                : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-gray-100 dark:hover:bg-slate-700 border border-[var(--border-color)]'
+                              }`}
                           >
                             {pageNum}
                           </button>

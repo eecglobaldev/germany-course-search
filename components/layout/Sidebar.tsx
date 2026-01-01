@@ -50,7 +50,7 @@ export default function Sidebar({ children, isOpen = true, onClose }: SidebarPro
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ 
+        animate={{
           x: sidebarX,
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -59,7 +59,7 @@ export default function Sidebar({ children, isOpen = true, onClose }: SidebarPro
           top-0 left-0
           ${isMobile && !isOpen ? 'w-0 overflow-hidden' : 'w-64'}
           h-full
-          glass border-r border-white/20
+          glass border-r border-[var(--glass-border)]
           overflow-y-auto
           relative z-50 lg:z-10
           shadow-xl
@@ -68,23 +68,23 @@ export default function Sidebar({ children, isOpen = true, onClose }: SidebarPro
         `}
       >
         {/* Mobile Header with Close Button */}
-        <div className="p-4 sticky top-0 glass border-b border-white/20 mb-4 backdrop-blur-xl flex items-center justify-between lg:justify-start">
+        <div className="p-4 sticky top-0 glass border-b border-[var(--glass-border)] mb-4 backdrop-blur-xl flex items-center justify-between lg:justify-start">
           <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
             Filters
           </h2>
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden p-2 rounded-lg hover:bg-white/30 transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-white/30 dark:hover:bg-white/10 transition-colors"
               aria-label="Close filters"
             >
-              <X className="h-5 w-5 text-gray-600" />
+              <X className="h-5 w-5 text-[var(--text-secondary)]" />
             </button>
           )}
         </div>
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-4 text-[var(--text-primary)]">
           {children || (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[var(--text-secondary)]">
               Filter components will be added here
             </p>
           )}
