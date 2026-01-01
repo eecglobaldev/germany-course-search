@@ -100,8 +100,8 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading courses...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading courses...</p>
         </div>
       </div>
     );
@@ -112,13 +112,13 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center max-w-md">
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="text-red-600 dark:text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
             Error Loading Courses
           </h2>
-          <p className="text-gray-600 mb-4">{error.message}</p>
-          <p className="text-sm text-gray-500">
-            Make sure <code className="bg-gray-100 px-2 py-1 rounded">courses_processed.json</code> exists in the public directory.
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error.message}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-500">
+            Make sure <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-900 dark:text-gray-100">courses_processed.json</code> exists in the public directory.
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function Home() {
 
           <button
             onClick={resetFilters}
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             Reset Filters
           </button>
@@ -222,7 +222,7 @@ export default function Home() {
       </Sidebar>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-50">
+      <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Search Bar */}
           <div className="mb-6">
@@ -235,14 +235,14 @@ export default function Home() {
 
           {/* Results Info */}
           <div className="mb-6 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{filteredCourses.length.toLocaleString()}</span> of{' '}
-              <span className="font-semibold text-gray-900">{totalCount.toLocaleString()}</span> courses
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Showing <span className="font-semibold text-gray-900 dark:text-white">{filteredCourses.length.toLocaleString()}</span> of{' '}
+              <span className="font-semibold text-gray-900 dark:text-white">{totalCount.toLocaleString()}</span> courses
             </p>
             {filteredCourses.length === 0 && (
               <button
                 onClick={resetFilters}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 Clear filters
               </button>

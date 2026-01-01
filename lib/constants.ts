@@ -29,7 +29,7 @@ export const colors = {
 export const DEGREE_LEVELS = ['Bachelor', 'Master', 'MBA', 'LLM', 'Other'] as const;
 export const DEGREE_TYPES = ['Arts', 'Science', 'Engineering', 'Business', 'Education', 'Laws', 'Other'] as const;
 export const STUDY_TYPES = ['Second cycle', 'Undergraduate'] as const;
-export const STUDY_MODES = ['full-time', 'part-time', 'international course'] as const;
+export const STUDY_MODES = ['full-time', 'international course'] as const;
 export const ADMISSION_MODES = ['Open', 'NC Restricted', 'Aptitude Test'] as const;
 export const TUITION_MODELS = ['all', 'free', 'paid'] as const;
 

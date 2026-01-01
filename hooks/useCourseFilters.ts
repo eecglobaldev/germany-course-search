@@ -26,7 +26,6 @@ type FilterAction =
   | { type: 'SET_GRADE_SCORE'; payload: number | undefined }
   | { type: 'SET_DURATION'; payload: [number, number] }
   | { type: 'SET_INTAKE_MONTHS'; payload: string[] }
-  | { type: 'SET_ADMISSION_MODE'; payload: FilterState['admissionMode'] }
   | { type: 'SET_CITIES'; payload: string[] }
   | { type: 'SET_UNIVERSITIES'; payload: string[] }
   | { type: 'SET_SORT'; payload: { by: FilterState['sortBy']; order: FilterState['sortOrder'] } }

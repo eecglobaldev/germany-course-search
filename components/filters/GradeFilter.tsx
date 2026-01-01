@@ -44,15 +44,15 @@ export default function GradeFilter({
     : 'Minimum Grade';
 
   return (
-    <div className="border-b border-gray-200 pb-4 mb-4 relative">
+    <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-4 relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left"
       >
-        <span className="text-sm font-semibold text-gray-900">
+        <span className="text-sm font-semibold text-gray-900 dark:text-white">
           {displayText}
         </span>
-        <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
@@ -66,8 +66,8 @@ export default function GradeFilter({
                   onClick={() => handleGradeClick(grade)}
                   className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
                     isSelected
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                      ? 'bg-blue-600 dark:bg-blue-500 text-white border-blue-600 dark:border-blue-500'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500'
                   }`}
                 >
                   {grade}
@@ -78,7 +78,7 @@ export default function GradeFilter({
           {selectedValue !== undefined && (
             <button
               onClick={handleClear}
-              className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+              className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
             >
               Clear selection
             </button>

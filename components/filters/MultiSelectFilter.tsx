@@ -39,15 +39,15 @@ export default function MultiSelectFilter({
     : title;
 
   return (
-    <div className="border-b border-gray-200 pb-4 mb-4 relative">
+    <div className="border-b border-gray-200 dark:border-gray-800 pb-4 mb-4 relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left"
       >
-        <span className="text-sm font-semibold text-gray-900">
+        <span className="text-sm font-semibold text-gray-900 dark:text-white">
           {displayText}
         </span>
-        <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
@@ -57,15 +57,15 @@ export default function MultiSelectFilter({
             return (
               <label
                 key={option}
-                className="flex items-center cursor-pointer hover:bg-gray-50 p-1 rounded"
+                className="flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-1 rounded"
               >
                 <input
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => handleToggle(option)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-600 dark:text-blue-500 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                 />
-                <span className="ml-2 text-sm text-gray-700">{option}</span>
+                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">{option}</span>
               </label>
             );
           })}
