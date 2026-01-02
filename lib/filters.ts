@@ -59,13 +59,30 @@ export function filterCourses(
       }
     }
 
-    // IELTS filter - show courses requiring <= user's score
-    if (filters.ieltsScore !== undefined) {
-      if (course.minIelts === null || course.minIelts === undefined) {
-        // Include courses with unknown IELTS requirements
-        // This is intentional - don't hide courses with missing data
-      } else if (course.minIelts > filters.ieltsScore) {
-        return false; // Course requires higher score than user has
+    // IELTS filter - show courses requiring exactly the selected scores or "Not Specified"
+    const hasIeltsFilter = filters.ieltsScores.length > 0 || filters.ieltsNotSpecified;
+    
+    if (hasIeltsFilter) {
+      const hasIeltsScore = course.minIelts !== null && course.minIelts !== undefined;
+      const courseIeltsScore = course.minIelts;
+      
+      let matchesFilter = false;
+      
+      // Check if course matches "Not Specified" filter
+      if (filters.ieltsNotSpecified && !hasIeltsScore) {
+        matchesFilter = true;
+      }
+      
+      // Check if course matches selected scores
+      if (filters.ieltsScores.length > 0 && hasIeltsScore && courseIeltsScore !== undefined) {
+        if (filters.ieltsScores.includes(courseIeltsScore)) {
+          matchesFilter = true;
+        }
+      }
+      
+      // If filter is active but course doesn't match, exclude it
+      if (!matchesFilter) {
+        return false;
       }
     }
 
@@ -105,12 +122,32 @@ export function filterCourses(
       }
     }
 
-    // Grade filter - show courses requiring <= user's grade (German grading: lower is better)
-    if (filters.gradeScore !== undefined) {
-      if (course.minGrade === null || course.minGrade === undefined) {
-        // Include courses with unknown grade requirements
-      } else if (course.minGrade > filters.gradeScore) {
-        return false; // Course requires better grade (lower number) than user has
+    // Grade filter - show courses requiring <= selected grade or "Not Specified"
+    const hasGradeFilter = filters.gradeScore !== undefined || filters.gradeNotSpecified;
+    
+    if (hasGradeFilter) {
+      const hasGrade = course.minGrade !== null && course.minGrade !== undefined;
+      const courseGrade = course.minGrade;
+      
+      let matchesFilter = false;
+      
+      // Check if course matches "Not Specified" filter
+      if (filters.gradeNotSpecified && !hasGrade) {
+        matchesFilter = true;
+      }
+      
+      // Check if course matches selected grade (show courses with grade >= selected)
+      // German grading: lower is better (1.0 = best, 3.0 = minimum passing)
+      // If user selects 2.0, show courses requiring 2.0 or higher (2.0, 2.2, 2.3, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0)
+      if (filters.gradeScore !== undefined && hasGrade && courseGrade !== undefined) {
+        if (courseGrade >= filters.gradeScore) {
+          matchesFilter = true;
+        }
+      }
+      
+      // If filter is active but course doesn't match, exclude it
+      if (!matchesFilter) {
+        return false;
       }
     }
 

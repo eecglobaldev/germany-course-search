@@ -6,6 +6,7 @@
 'use client';
 
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, MapPin, Calendar, Clock, GraduationCap, DollarSign, FileText } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -18,49 +19,81 @@ interface CourseDetailModalProps {
 }
 
 export default function CourseDetailModal({ course, isOpen, onClose }: CourseDetailModalProps) {
-  if (!isOpen || !course) return null;
+  // Handle Escape key press
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
-      {/* Backdrop - uses semantic bg-glass for consistency */}
-      <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-md transition-opacity z-[100]"
-        onClick={onClose}
-      />
+    <AnimatePresence>
+      {isOpen && course && (
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
+          {/* Backdrop - uses semantic bg-glass for consistency */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100]"
+            onClick={onClose}
+          />
 
-      {/* Modal */}
-      <div className="flex min-h-full items-start justify-center pt-24 px-4 pb-4 relative z-[101]">
-        <div className="relative bg-[var(--bg-modal)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100vh-8rem)] overflow-y-auto border border-[var(--border-color)]">
+          {/* Modal */}
+          <div className="flex min-h-full items-start justify-center pt-24 px-4 pb-4 relative z-[101]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ 
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+                duration: 0.3
+              }}
+              className="relative bg-[var(--bg-modal)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100vh-8rem)] overflow-y-auto border border-[var(--border-color)]"
+            >
           {/* Gradient border effect - Optional premium touch */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 via-blue-500/20 to-pink-500/20 opacity-0 hover:opacity-100 transition-opacity duration-500 -z-10 blur-xl"></div>
 
           {/* Header */}
-          <div className="sticky top-0 bg-[var(--bg-modal)] border-b border-[var(--border-color)] px-6 py-5 flex items-start justify-between z-10">
+          <div className="sticky top-0 bg-[var(--bg-modal)] border-b border-[var(--border-color)] px-4 py-3 flex items-start justify-between z-10">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent mb-3">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent mb-2">
                 {course.courseName}
               </h2>
-              <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+              <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">
                 <div className="flex items-center gap-1">
-                  <GraduationCap className="h-4 w-4" />
+                  <GraduationCap className="h-3.5 w-3.5" />
                   {course.university}
                 </div>
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-3.5 w-3.5" />
                   {course.city}
                 </div>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="ml-4 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+              className="ml-3 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* Content */}
-          <div className="px-6 py-4 space-y-6">
+          <div className="px-4 py-3 space-y-5">
             {/* Admission Mode - Prominent Display */}
             {course.admissionMode && (
               <section className="bg-[var(--bg-card)] rounded-lg p-4 border border-[var(--border-color)]">
@@ -258,7 +291,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 {course.rawData?.completionRequirements && (
                   <div>
                     <p className="text-sm text-[var(--text-secondary)] mb-1">Completion Requirements</p>
-                    <ul className="list-disc list-inside space-y-1">
+                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
                       {course.rawData.completionRequirements
                         .split(';')
                         .map((req: string) => req.trim())
@@ -272,7 +305,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 {course.rawData?.practicalExperience && (
                   <div>
                     <p className="text-sm text-[var(--text-secondary)] mb-1">Practical Experience</p>
-                    <ul className="list-disc list-inside space-y-1">
+                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
                       {course.rawData.practicalExperience
                         .split(';')
                         .map((req: string) => req.trim())
@@ -292,7 +325,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 {course.rawData?.accessRequirements && (
                   <div>
                     <p className="text-sm text-[var(--text-secondary)] mb-1">Access Requirements</p>
-                    <ul className="list-disc list-inside space-y-1">
+                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
                       {course.rawData.accessRequirements
                         .split(';')
                         .map((req: string) => req.trim())
@@ -392,23 +425,24 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 </div>
               </section>
             ) : null}
+
+            {/* Official Page Link at the end */}
+            <div className="pt-4 pb-6 border-t border-[var(--border-color)]">
+              <Button
+                variant="primary"
+                onClick={() => window.open(course.detailPageUrl, '_blank')}
+                className="w-full"
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View Official Page
+              </Button>
+            </div>
           </div>
 
-          {/* Footer */}
-          <div className="sticky bottom-0 bg-[var(--bg-modal)] border-t border-[var(--border-color)] px-6 py-4 flex items-center justify-between z-10">
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => window.open(course.detailPageUrl, '_blank')}
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              View Official Page
-            </Button>
+            </motion.div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -18,12 +18,14 @@ type FilterAction =
   | { type: 'SET_STUDY_MODES'; payload: string[] }
   | { type: 'SET_ADMISSION_MODES'; payload: string[] }
   | { type: 'SET_TUITION'; payload: FilterState['tuitionModel'] }
-  | { type: 'SET_IELTS_SCORE'; payload: number | undefined }
+  | { type: 'SET_IELTS_SCORES'; payload: number[] }
+  | { type: 'SET_IELTS_NOT_SPECIFIED'; payload: boolean }
   | { type: 'SET_TOEFL_IBT_SCORE'; payload: number | undefined }
   | { type: 'SET_TOEFL_PBT_SCORE'; payload: number | undefined }
   | { type: 'SET_TOEFL_CBT_SCORE'; payload: number | undefined }
   | { type: 'SET_TOEIC_SCORE'; payload: number | undefined }
   | { type: 'SET_GRADE_SCORE'; payload: number | undefined }
+  | { type: 'SET_GRADE_NOT_SPECIFIED'; payload: boolean }
   | { type: 'SET_DURATION'; payload: [number, number] }
   | { type: 'SET_INTAKE_MONTHS'; payload: string[] }
   | { type: 'SET_CITIES'; payload: string[] }
@@ -52,8 +54,10 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
       return { ...state, selectedAdmissionModes: action.payload, page: 1 };
     case 'SET_TUITION':
       return { ...state, tuitionModel: action.payload, page: 1 };
-    case 'SET_IELTS_SCORE':
-      return { ...state, ieltsScore: action.payload, page: 1 };
+    case 'SET_IELTS_SCORES':
+      return { ...state, ieltsScores: action.payload, page: 1 };
+    case 'SET_IELTS_NOT_SPECIFIED':
+      return { ...state, ieltsNotSpecified: action.payload, page: 1 };
     case 'SET_TOEFL_IBT_SCORE':
       return { ...state, toeflIbtScore: action.payload, page: 1 };
     case 'SET_TOEFL_PBT_SCORE':
@@ -64,6 +68,8 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
       return { ...state, toeicScore: action.payload, page: 1 };
     case 'SET_GRADE_SCORE':
       return { ...state, gradeScore: action.payload, page: 1 };
+    case 'SET_GRADE_NOT_SPECIFIED':
+      return { ...state, gradeNotSpecified: action.payload, page: 1 };
     case 'SET_DURATION':
       return { ...state, durationRange: action.payload, page: 1 };
     case 'SET_INTAKE_MONTHS':
@@ -125,8 +131,12 @@ export function useCourseFilters(initialState?: Partial<FilterState>) {
     dispatch({ type: 'SET_TUITION', payload: model });
   }, []);
 
-  const setIELTSScore = useCallback((score?: number) => {
-    dispatch({ type: 'SET_IELTS_SCORE', payload: score });
+  const setIELTSScores = useCallback((scores: number[]) => {
+    dispatch({ type: 'SET_IELTS_SCORES', payload: scores });
+  }, []);
+
+  const setIELTSNotSpecified = useCallback((value: boolean) => {
+    dispatch({ type: 'SET_IELTS_NOT_SPECIFIED', payload: value });
   }, []);
 
   const setTOEFLIbtScore = useCallback((score?: number) => {
@@ -147,6 +157,10 @@ export function useCourseFilters(initialState?: Partial<FilterState>) {
 
   const setGradeScore = useCallback((score?: number) => {
     dispatch({ type: 'SET_GRADE_SCORE', payload: score });
+  }, []);
+
+  const setGradeNotSpecified = useCallback((value: boolean) => {
+    dispatch({ type: 'SET_GRADE_NOT_SPECIFIED', payload: value });
   }, []);
 
   const setDuration = useCallback((range: [number, number]) => {
@@ -182,12 +196,14 @@ export function useCourseFilters(initialState?: Partial<FilterState>) {
     setStudyModes,
     setAdmissionModes,
     setTuition,
-    setIELTSScore,
+    setIELTSScores,
+    setIELTSNotSpecified,
     setTOEFLIbtScore,
     setTOEFLPbtScore,
     setTOEFLCbtScore,
     setTOEICScore,
     setGradeScore,
+    setGradeNotSpecified,
     setDuration,
     setIntakeMonths,
     setSort,

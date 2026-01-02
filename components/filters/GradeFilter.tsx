@@ -10,13 +10,17 @@ import { ChevronDown } from 'lucide-react';
 
 interface GradeFilterProps {
   selectedValue?: number;
+  notSpecified?: boolean;
   onChange: (value: number | undefined) => void;
+  onNotSpecifiedChange?: (value: boolean) => void;
   gradeOptions: number[];
 }
 
 export default function GradeFilter({
   selectedValue,
+  notSpecified,
   onChange,
+  onNotSpecifiedChange,
   gradeOptions,
 }: GradeFilterProps) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -28,6 +32,10 @@ export default function GradeFilter({
     } else {
       // Set the selected grade
       onChange(grade);
+      // Clear "Not Specified" when selecting a grade (single select)
+      if (onNotSpecifiedChange && notSpecified) {
+        onNotSpecifiedChange(false);
+      }
     }
     // Close after selection
     setIsOpen(false);
@@ -36,12 +44,26 @@ export default function GradeFilter({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onChange(undefined);
+    if (onNotSpecifiedChange) {
+      onNotSpecifiedChange(false);
+    }
     setIsOpen(false);
   };
 
-  const displayText = selectedValue !== undefined
-    ? `Minimum Grade (≤${selectedValue})`
-    : 'Minimum Grade';
+  const hasSelection = selectedValue !== undefined || notSpecified;
+  
+  const displayText = (() => {
+    const parts = [];
+    if (selectedValue !== undefined) {
+      // Lower is better (1.0 = best, 3.0 = minimum passing)
+      // Show "≥" to indicate courses requiring this grade or higher (worse requirements)
+      parts.push(`≥${selectedValue}`);
+    }
+    if (notSpecified) {
+      parts.push('Not Specified');
+    }
+    return parts.length > 0 ? `Grade Requirement (${parts.join(', ')})` : 'Grade Requirement';
+  })();
 
   return (
     <div className="border-b border-[var(--border-color)] pb-4 mb-4 relative">
@@ -57,8 +79,11 @@ export default function GradeFilter({
 
       {isOpen && (
         <div className="mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          <p className="text-xs text-[var(--text-muted)] mb-2 italic">
+            Lower is better (1.0 = excellent, 3.0 = minimum passing). Shows courses requiring selected grade or higher.
+          </p>
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-            {gradeOptions.map((grade) => {
+            {[...gradeOptions].reverse().map((grade) => {
               const isSelected = selectedValue === grade;
               return (
                 <button
@@ -74,7 +99,24 @@ export default function GradeFilter({
               );
             })}
           </div>
-          {selectedValue !== undefined && (
+          {onNotSpecifiedChange && (
+            <button
+              onClick={() => {
+                onNotSpecifiedChange(!notSpecified);
+                // If selecting "Not Specified", clear grade selection (single select)
+                if (!notSpecified && selectedValue !== undefined) {
+                  onChange(undefined);
+                }
+              }}
+              className={`w-full mt-2 h-10 flex items-center justify-center text-sm font-medium rounded-lg border-2 transition-all duration-300 transform hover:scale-105 ${notSpecified
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-500 dark:to-blue-500 text-white border-transparent shadow-lg'
+                  : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-color)] hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-900/30 dark:hover:to-blue-900/30 hover:border-purple-300 dark:hover:border-purple-500/50 shadow-sm hover:shadow-md'
+                }`}
+            >
+              Not Specified
+            </button>
+          )}
+          {hasSelection && (
             <button
               onClick={handleClear}
               className="mt-3 text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent hover:from-purple-700 hover:to-blue-700 dark:hover:from-purple-300 dark:hover:to-blue-300 transition-all duration-300"

@@ -44,12 +44,14 @@ export default function Home() {
     setStudyTypes,
     setStudyModes,
     setAdmissionModes,
-    setIELTSScore,
+    setIELTSScores,
+    setIELTSNotSpecified,
     setTOEFLIbtScore,
     setTOEFLPbtScore,
     setTOEFLCbtScore,
     setTOEICScore,
     setGradeScore,
+    setGradeNotSpecified,
     setSort,
     resetFilters,
     setPage
@@ -187,6 +189,7 @@ export default function Home() {
             options={STUDY_TYPES}
             selectedValues={filters.selectedStudyTypes}
             onChange={setStudyTypes}
+            displayMap={{ 'Second cycle': 'Masters' }}
           />
 
           {/* Study Mode Filter */}
@@ -208,7 +211,9 @@ export default function Home() {
           {/* Grade Filter */}
           <GradeFilter
             selectedValue={filters.gradeScore}
+            notSpecified={filters.gradeNotSpecified}
             onChange={setGradeScore}
+            onNotSpecifiedChange={setGradeNotSpecified}
             gradeOptions={[...GRADE_OPTIONS]}
           />
 
@@ -217,9 +222,13 @@ export default function Home() {
             <EnglishExamFilter
               title="IELTS"
               examType="ielts"
-              selectedValue={filters.ieltsScore}
-              onChange={setIELTSScore}
+              selectedValues={filters.ieltsScores}
+              notSpecified={filters.ieltsNotSpecified}
+              onChangeMultiple={setIELTSScores}
+              onNotSpecifiedChange={setIELTSNotSpecified}
               scoreOptions={[...IELTS_SCORES]}
+              allowMultiple={true}
+              showNotSpecified={true}
             />
 
             <EnglishExamFilter

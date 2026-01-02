@@ -78,7 +78,8 @@ export const SUBJECT_CATEGORIES = [
 ] as const;
 
 // English exam score options
-export const IELTS_SCORES = [4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0] as const;
+// IELTS: Only 5.0 and above (4.0 and 4.5 removed per user request)
+export const IELTS_SCORES = [5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0] as const;
 // TOEFL IBT: 50 to 120, increments of 10
 export const TOEFL_IBT_SCORES: readonly number[] = [50, 60, 70, 80, 90, 100, 110, 120];
 // TOEFL PBT: 400 to 700, increments of 10

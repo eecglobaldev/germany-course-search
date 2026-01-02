@@ -19,12 +19,14 @@ export interface FilterState {
   selectedStudyModes: string[];
   selectedAdmissionModes: string[];
   tuitionModel: TuitionFilter;
-  ieltsScore?: number; // User's IELTS score - show courses requiring <= this
+  ieltsScores: number[]; // Selected IELTS scores - show courses requiring exactly these scores
+  ieltsNotSpecified: boolean; // Show courses without IELTS requirement
   toeflIbtScore?: number; // User's TOEFL IBT score - show courses requiring <= this
   toeflPbtScore?: number; // User's TOEFL PBT score - show courses requiring <= this
   toeflCbtScore?: number; // User's TOEFL CBT score - show courses requiring <= this
   toeicScore?: number; // User's TOEIC score - show courses requiring <= this
-  gradeScore?: number; // User's grade - show courses requiring <= this (German grading: lower is better)
+  gradeScore?: number; // Selected grade - show courses requiring <= this (German grading: lower is better)
+  gradeNotSpecified: boolean; // Show courses without grade requirement
   durationRange: [number, number];
   selectedIntakeMonths: string[];
   selectedCities: string[];
@@ -50,6 +52,9 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   selectedIntakeMonths: [],
   selectedCities: [],
   selectedUniversities: [],
+  ieltsScores: [],
+  ieltsNotSpecified: false,
+  gradeNotSpecified: false,
   sortBy: 'relevance',
   sortOrder: 'asc',
   page: 1,

@@ -188,3 +188,12 @@ html {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
 }
+
+/* Yellow bullet points for lists in course detail modal */
+ul.list-disc li::marker {
+  color: #eab308; /* yellow-500 */
+}
+
+.dark ul.list-disc li::marker {
+  color: #facc15; /* yellow-400 */
+}

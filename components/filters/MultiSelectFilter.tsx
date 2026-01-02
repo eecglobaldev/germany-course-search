@@ -14,6 +14,7 @@ interface MultiSelectFilterProps {
   options: readonly string[];
   selectedValues: string[];
   onChange: (values: string[]) => void;
+  displayMap?: Record<string, string>; // Optional mapping for display labels
 }
 
 export default function MultiSelectFilter({
@@ -21,6 +22,7 @@ export default function MultiSelectFilter({
   options,
   selectedValues,
   onChange,
+  displayMap,
 }: MultiSelectFilterProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -65,7 +67,9 @@ export default function MultiSelectFilter({
                   onChange={() => handleToggle(option)}
                   className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-[var(--border-color)] rounded bg-[var(--bg-card)] checked:bg-gradient-to-r checked:from-purple-600 checked:to-blue-600 transition-all duration-300"
                 />
-                <span className={`ml-3 text-sm transition-all duration-300 ${isSelected ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'} group-hover/option:text-purple-700 dark:group-hover/option:text-purple-400`}>{option}</span>
+                <span className={`ml-3 text-sm transition-all duration-300 ${isSelected ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'} group-hover/option:text-purple-700 dark:group-hover/option:text-purple-400`}>
+                  {displayMap?.[option] || option}
+                </span>
               </label>
             );
           })}
