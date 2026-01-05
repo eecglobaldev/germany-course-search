@@ -62,19 +62,18 @@ export const DEFAULT_ITEMS_PER_PAGE = 20;
 // Search
 export const SEARCH_DEBOUNCE_MS = 300;
 
-// Subject categories (will be populated from keywords file)
+// Subject categories (consolidated study fields; order matters for UI)
 export const SUBJECT_CATEGORIES = [
-  'Engineering',
-  'IT / Computer Science',
-  'Business / Economics',
-  'Natural Sciences',
-  'Social Sciences',
-  'Humanities',
-  'Arts / Design',
-  'Medicine / Health',
-  'Law',
-  'Education',
-  'General / Interdisciplinary',
+  'Agricultural and Forest Sciences',
+  'Art, Music, Design',
+  'Economic Sciences, Law',
+  'Engineering Sciences',
+  'Humanities and Social Sciences',
+  'Language and Cultural Studies',
+  'Mathematics, Natural Sciences',
+  'Medicine, Health Sciences',
+  'Public Administration',
+  'Teaching Degrees',
 ] as const;
 
 // English exam score options

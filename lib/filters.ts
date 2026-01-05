@@ -15,12 +15,16 @@ export function filterCourses(
   filters: FilterState
 ): ProcessedCourse[] {
   return courses.filter((course) => {
-    // Subject filter (OR logic)
+    // Subject filter (OR logic) - consolidated study fields (broadCategories)
     if (filters.selectedSubjects.length > 0) {
-      const hasMatchingSubject = filters.selectedSubjects.some((subject) =>
-        course.broadCategories.includes(subject)
+      const categories = course.broadCategories ?? [];
+      if (categories.length === 0) return false;
+
+      const hasMatching = filters.selectedSubjects.some((selected) =>
+        categories.some((cat) => cat.toLowerCase() === selected.toLowerCase())
       );
-      if (!hasMatchingSubject) return false;
+
+      if (!hasMatching) return false;
     }
 
     // Degree level filter (OR logic)
@@ -168,6 +172,37 @@ export function filterCourses(
       if (!hasMatchingMonth) return false;
     }
 
+    // Intake season filter (OR logic - show courses with intake for selected season)
+    if (filters.selectedIntakeSeasons.length > 0) {
+      let hasMatchingSeason = false;
+      
+      // Check each selected season
+      for (const selectedSeason of filters.selectedIntakeSeasons) {
+        if (selectedSeason === 'summer') {
+          // Include if: intakeSeason is 'summer' or 'all', OR has summer deadline
+          if (course.intakeSeason === 'summer' || 
+              course.intakeSeason === 'all' || 
+              course.deadlineSummer) {
+            hasMatchingSeason = true;
+            break;
+          }
+        } else if (selectedSeason === 'winter') {
+          // Include if: intakeSeason is 'winter' or 'all', OR has winter deadline
+          if (course.intakeSeason === 'winter' || 
+              course.intakeSeason === 'all' || 
+              course.deadlineWinter) {
+            hasMatchingSeason = true;
+            break;
+          }
+        }
+      }
+      
+      // If no season matches, exclude the course
+      if (!hasMatchingSeason) {
+        return false;
+      }
+    }
+
     // Admission mode filter (OR logic - multi-select)
     if (filters.selectedAdmissionModes.length > 0) {
       if (!filters.selectedAdmissionModes.includes(course.admissionMode)) {
@@ -177,9 +212,26 @@ export function filterCourses(
 
     // City filter (OR logic)
     if (filters.selectedCities.length > 0) {
-      const hasMatchingCity = filters.selectedCities.some((city) =>
-        course.city.toLowerCase() === city.toLowerCase() ||
-        course.cities?.some((c) => c.toLowerCase() === city.toLowerCase())
+      // Extract all cities from course (handle comma-separated cities)
+      const courseCities: string[] = [];
+      if (course.city) {
+        const splitCities = course.city.split(',').map(c => c.trim()).filter(c => c);
+        courseCities.push(...splitCities);
+      }
+      if (course.cities) {
+        course.cities.forEach((city) => {
+          if (city) {
+            const splitCities = city.split(',').map(c => c.trim()).filter(c => c);
+            courseCities.push(...splitCities);
+          }
+        });
+      }
+      
+      // Check if any selected city matches any course city (case-insensitive)
+      const hasMatchingCity = filters.selectedCities.some((selectedCity) =>
+        courseCities.some((courseCity) => 
+          courseCity.toLowerCase() === selectedCity.toLowerCase()
+        )
       );
       if (!hasMatchingCity) return false;
     }

@@ -15,6 +15,7 @@ interface MultiSelectFilterProps {
   selectedValues: string[];
   onChange: (values: string[]) => void;
   displayMap?: Record<string, string>; // Optional mapping for display labels
+  maxHeight?: string; // Optional max height for scrollable dropdown (e.g., "200px", "10rem")
 }
 
 export default function MultiSelectFilter({
@@ -23,6 +24,7 @@ export default function MultiSelectFilter({
   selectedValues,
   onChange,
   displayMap,
+  maxHeight,
 }: MultiSelectFilterProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -53,7 +55,10 @@ export default function MultiSelectFilter({
       </button>
 
       {isOpen && (
-        <div className="mt-3 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div 
+          className={`mt-3 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300 ${maxHeight ? 'overflow-y-auto pr-2' : ''}`}
+          style={maxHeight ? { maxHeight } : undefined}
+        >
           {options.map((option) => {
             const isSelected = selectedValues.includes(option);
             return (

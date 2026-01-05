@@ -92,7 +92,7 @@ export default function CourseBadges({ course }: CourseBadgesProps) {
       {/* MOI Badge - Medium of Instruction */}
       {course.acceptsMoi && (
         <Badge variant="info" size="sm">
-          MOI Accepted
+          Other english exams accepted
         </Badge>
       )}
 

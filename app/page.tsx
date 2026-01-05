@@ -22,16 +22,15 @@ import CourseDetailModal from '@/components/course/CourseDetailModal';
 import EmptyState from '@/components/ui/EmptyState';
 import Button from '@/components/ui/Button';
 import {
-  DEGREE_LEVELS,
   STUDY_TYPES,
-  STUDY_MODES,
   ADMISSION_MODES,
   IELTS_SCORES,
   TOEFL_IBT_SCORES,
   TOEFL_PBT_SCORES,
   TOEFL_CBT_SCORES,
   TOEIC_SCORES,
-  GRADE_OPTIONS
+  GRADE_OPTIONS,
+  SUBJECT_CATEGORIES
 } from '@/lib/constants';
 import type { ProcessedCourse } from '@/types/course';
 
@@ -40,9 +39,8 @@ export default function Home() {
   const {
     filters,
     setSearch,
-    setDegreeLevels,
+    setSubjects,
     setStudyTypes,
-    setStudyModes,
     setAdmissionModes,
     setIELTSScores,
     setIELTSNotSpecified,
@@ -52,6 +50,9 @@ export default function Home() {
     setTOEICScore,
     setGradeScore,
     setGradeNotSpecified,
+    setIntakeSeasons,
+    setCities,
+    setUniversities,
     setSort,
     resetFilters,
     setPage
@@ -109,6 +110,54 @@ export default function Home() {
     setIsModalOpen(false);
     setSelectedCourse(null);
   };
+
+  // Extract unique cities from courses
+  const uniqueCities = useMemo(() => {
+    if (loading || error || courses.length === 0) return [];
+    const citySet = new Set<string>();
+    courses.forEach((course) => {
+      // Handle primary city - split by comma if needed
+      if (course.city) {
+        const cities = course.city.split(',').map(c => c.trim()).filter(c => c);
+        cities.forEach(city => citySet.add(city));
+      }
+      // Handle cities array
+      if (course.cities) {
+        course.cities.forEach((city) => {
+          if (city) {
+            // Also split by comma in case cities array contains comma-separated strings
+            const splitCities = city.split(',').map(c => c.trim()).filter(c => c);
+            splitCities.forEach(c => citySet.add(c));
+          }
+        });
+      }
+    });
+    return Array.from(citySet).sort();
+  }, [courses, loading, error]);
+
+  // Extract unique universities from courses
+  const uniqueUniversities = useMemo(() => {
+    if (loading || error || courses.length === 0) return [];
+    const universitySet = new Set<string>();
+    courses.forEach((course) => {
+      if (course.university) {
+        universitySet.add(course.university);
+      }
+    });
+    return Array.from(universitySet).sort();
+  }, [courses, loading, error]);
+
+  // Extract subject categories from courses (broadCategories), ordered by SUBJECT_CATEGORIES
+  const uniqueSubjects = useMemo(() => {
+    if (loading || error || courses.length === 0) return [];
+    const set = new Set<string>();
+    courses.forEach((course) => {
+      (course.broadCategories || []).forEach((cat) => {
+        if (cat) set.add(cat);
+      });
+    });
+    return SUBJECT_CATEGORIES.filter((cat) => set.has(cat));
+  }, [courses, loading, error]);
 
   // Apply search, filters, and sorting
   const filteredCourses = useMemo(() => {
@@ -175,12 +224,12 @@ export default function Home() {
       {/* Sidebar */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
         <div className="space-y-4">
-          {/* Degree Level Filter */}
+          {/* Subject Filter */}
           <MultiSelectFilter
-            title="Degree Level"
-            options={DEGREE_LEVELS}
-            selectedValues={filters.selectedDegreeLevels}
-            onChange={setDegreeLevels}
+            title="Subject"
+            options={uniqueSubjects}
+            selectedValues={filters.selectedSubjects}
+            onChange={setSubjects}
           />
 
           {/* Study Type Filter */}
@@ -189,15 +238,7 @@ export default function Home() {
             options={STUDY_TYPES}
             selectedValues={filters.selectedStudyTypes}
             onChange={setStudyTypes}
-            displayMap={{ 'Second cycle': 'Masters' }}
-          />
-
-          {/* Study Mode Filter */}
-          <MultiSelectFilter
-            title="Study Mode"
-            options={STUDY_MODES}
-            selectedValues={filters.selectedStudyModes}
-            onChange={setStudyModes}
+            displayMap={{ 'Second cycle': 'Masters', 'Undergraduate': 'Bachelor' }}
           />
 
           {/* Admission Mode Filter */}
@@ -206,6 +247,33 @@ export default function Home() {
             options={ADMISSION_MODES}
             selectedValues={filters.selectedAdmissionModes}
             onChange={setAdmissionModes}
+          />
+
+          {/* Location Filter */}
+          <MultiSelectFilter
+            title="Location"
+            options={uniqueCities}
+            selectedValues={filters.selectedCities}
+            onChange={setCities}
+            maxHeight="300px"
+          />
+
+          {/* University Filter */}
+          <MultiSelectFilter
+            title="University"
+            options={uniqueUniversities}
+            selectedValues={filters.selectedUniversities}
+            onChange={setUniversities}
+            maxHeight="300px"
+          />
+
+          {/* Intake Season Filter */}
+          <MultiSelectFilter
+            title="Intake Season"
+            options={['winter', 'summer']}
+            selectedValues={filters.selectedIntakeSeasons}
+            onChange={setIntakeSeasons}
+            displayMap={{ 'winter': 'Winter', 'summer': 'Summer' }}
           />
 
           {/* Grade Filter */}

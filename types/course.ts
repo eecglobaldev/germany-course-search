@@ -95,6 +95,11 @@ export interface ProcessedCourse {
     completionRequirements?: string;
     practicalExperience?: string;
     furtherRequirements?: string;
+    duration?: string;
+    targetGroup?: string;
+    applicationDeadlineAptitudeTest?: string;
+    applicationDeadlineBeginningStudents?: string;
+    applicationDeadlineSelectionProcess?: string;
   };
 }
 

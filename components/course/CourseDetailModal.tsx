@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, MapPin, Calendar, Clock, GraduationCap, DollarSign, FileText } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import { renderTextWithLinks } from '@/lib/textUtils';
 import type { ProcessedCourse } from '@/types/course';
 
 interface CourseDetailModalProps {
@@ -192,37 +193,31 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 Duration & Study Mode
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {course.durationDisplay && (
+                {(course.rawData?.duration || course.durationDisplay) && (
                   <div>
                     <p className="text-sm text-[var(--text-secondary)] mb-1">Duration</p>
                     <p className="font-semibold text-[var(--text-primary)]">
-                      {course.durationDisplay}
-                      {course.durationYears && ` (${course.durationYears} years)`}
+                      {course.rawData?.duration || course.durationDisplay}
                     </p>
                   </div>
                 )}
-                {course.studyModes && course.studyModes.length > 0 && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Study Modes</p>
-                    <div className="flex flex-wrap gap-2">
-                      {course.studyModes.map((mode, idx) => (
-                        <Badge key={idx} variant="gray" size="sm">{mode}</Badge>
-                      ))}
+                {course.studyModes && course.studyModes.length > 0 && (() => {
+                  // Filter out 'part-time' and 'dual system', and map 'international course' to custom text
+                  const filteredModes = course.studyModes
+                    .filter(mode => mode !== 'part-time' && mode !== 'dual system')
+                    .map(mode => mode === 'international course' ? 'Highly preferred for international students' : mode);
+                  
+                  return filteredModes.length > 0 ? (
+                    <div>
+                      <p className="text-sm text-[var(--text-secondary)] mb-1">Study Modes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {filteredModes.map((mode, idx) => (
+                          <Badge key={idx} variant="gray" size="sm">{mode}</Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-                {course.isInternational && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">International</p>
-                    <Badge variant="success" size="sm">Yes</Badge>
-                  </div>
-                )}
-                {course.isPartTime && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Part-Time Available</p>
-                    <Badge variant="info" size="sm">Yes</Badge>
-                  </div>
-                )}
+                  ) : null;
+                })()}
               </div>
             </section>
 
@@ -288,52 +283,84 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                     <p className="text-xs text-[var(--text-muted)] mt-1">Note: Lower is better (1.0 = excellent, 3.0 = minimum passing)</p>
                   </div>
                 )}
-                {course.rawData?.completionRequirements && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Completion Requirements</p>
-                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
-                      {course.rawData.completionRequirements
-                        .split(';')
-                        .map((req: string) => req.trim())
-                        .filter((req: string) => req.length > 0)
-                        .map((req: string, idx: number) => (
-                          <li key={idx} className="text-[var(--text-primary)] text-sm">{req}</li>
-                        ))}
-                    </ul>
-                  </div>
-                )}
-                {course.rawData?.practicalExperience && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Practical Experience</p>
-                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
-                      {course.rawData.practicalExperience
-                        .split(';')
-                        .map((req: string) => req.trim())
-                        .filter((req: string) => req.length > 0)
-                        .map((req: string, idx: number) => (
-                          <li key={idx} className="text-[var(--text-primary)] text-sm">{req}</li>
-                        ))}
-                    </ul>
-                  </div>
-                )}
-                {course.rawData?.furtherRequirements && (
-                  <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Further Requirements</p>
-                    <p className="text-[var(--text-primary)] text-sm whitespace-pre-wrap">{course.rawData.furtherRequirements}</p>
-                  </div>
-                )}
                 {course.rawData?.accessRequirements && (
                   <div>
-                    <p className="text-sm text-[var(--text-secondary)] mb-1">Access Requirements</p>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Access and Admission Requirements</p>
                     <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
                       {course.rawData.accessRequirements
                         .split(';')
                         .map((req: string) => req.trim())
                         .filter((req: string) => req.length > 0)
                         .map((req: string, idx: number) => (
-                          <li key={idx} className="text-[var(--text-primary)] text-sm">{req}</li>
+                          <li key={idx} className="text-[var(--text-primary)] text-sm">
+                            {renderTextWithLinks(req)}
+                          </li>
                         ))}
                     </ul>
+                  </div>
+                )}
+                {course.rawData?.completionRequirements && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Completion of first university degree</p>
+                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
+                      {course.rawData.completionRequirements
+                        .split(';')
+                        .map((req: string) => req.trim())
+                        .filter((req: string) => req.length > 0)
+                        .map((req: string, idx: number) => (
+                          <li key={idx} className="text-[var(--text-primary)] text-sm">
+                            {renderTextWithLinks(req)}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+                {course.rawData?.practicalExperience && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Required practical experience</p>
+                    <ul className="list-disc list-inside space-y-1 marker:text-yellow-500 dark:marker:text-yellow-400">
+                      {course.rawData.practicalExperience
+                        .split(';')
+                        .map((req: string) => req.trim())
+                        .filter((req: string) => req.length > 0)
+                        .map((req: string, idx: number) => (
+                          <li key={idx} className="text-[var(--text-primary)] text-sm">
+                            {renderTextWithLinks(req)}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+                {course.rawData?.furtherRequirements && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Further admission requirements</p>
+                    <p className="text-[var(--text-primary)] text-sm whitespace-pre-wrap">
+                      {renderTextWithLinks(course.rawData.furtherRequirements)}
+                    </p>
+                  </div>
+                )}
+                {course.rawData?.applicationDeadlineAptitudeTest && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Application Deadline for Aptitude Test</p>
+                    <p className="text-[var(--text-primary)] text-sm">
+                      {renderTextWithLinks(course.rawData.applicationDeadlineAptitudeTest)}
+                    </p>
+                  </div>
+                )}
+                {course.rawData?.applicationDeadlineBeginningStudents && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Application Deadline for Beginning Students</p>
+                    <p className="text-[var(--text-primary)] text-sm">
+                      {renderTextWithLinks(course.rawData.applicationDeadlineBeginningStudents)}
+                    </p>
+                  </div>
+                )}
+                {course.rawData?.applicationDeadlineSelectionProcess && (
+                  <div>
+                    <p className="text-sm text-[var(--text-secondary)] mb-1">Application Deadline for Selection Process</p>
+                    <p className="text-[var(--text-primary)] text-sm">
+                      {renderTextWithLinks(course.rawData.applicationDeadlineSelectionProcess)}
+                    </p>
                   </div>
                 )}
               </div>
@@ -351,34 +378,41 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                   Intake Information
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
-                  {course.intakeSeason && course.intakeSeason !== 'unknown' && (
+                  {/* Intake Season - show both if both deadlines are present */}
+                  {(course.intakeSeason && course.intakeSeason !== 'unknown') || (course.deadlineWinter && course.deadlineSummer) ? (
                     <div>
                       <p className="text-sm text-[var(--text-secondary)] mb-1">Intake Season</p>
-                      <p className="font-semibold text-[var(--text-primary)] capitalize">{course.intakeSeason}</p>
+                      <p className="font-semibold text-[var(--text-primary)] capitalize">
+                        {course.deadlineWinter && course.deadlineSummer 
+                          ? 'Winter & Summer'
+                          : course.intakeSeason === 'all'
+                          ? 'All Seasons'
+                          : course.intakeSeason}
+                      </p>
                     </div>
-                  )}
-                  {course.intakeMonths && course.intakeMonths.length > 0 && (
-                    <div>
-                      <p className="text-sm text-[var(--text-secondary)] mb-1">Intake Months</p>
-                      <p className="font-semibold text-[var(--text-primary)]">{course.intakeMonths.join(', ')}</p>
-                    </div>
-                  )}
+                  ) : null}
                   {course.deadlineWinter && (
                     <div>
                       <p className="text-sm text-[var(--text-secondary)] mb-1">Winter Deadline</p>
-                      <p className="font-semibold text-[var(--text-primary)]">{course.deadlineWinter}</p>
+                      <p className="font-semibold text-[var(--text-primary)]">
+                        {course.deadlineWinter.replace(/^Bewerbungsfrist Nicht-EU-Ausländer;\s*/i, '').trim()}
+                      </p>
                     </div>
                   )}
                   {course.deadlineSummer && (
                     <div>
                       <p className="text-sm text-[var(--text-secondary)] mb-1">Summer Deadline</p>
-                      <p className="font-semibold text-[var(--text-primary)]">{course.deadlineSummer}</p>
+                      <p className="font-semibold text-[var(--text-primary)]">
+                        {course.deadlineSummer.replace(/^Bewerbungsfrist Nicht-EU-Ausländer;\s*/i, '').trim()}
+                      </p>
                     </div>
                   )}
                   {course.rawData?.beginningStudents && (
                     <div className="col-span-2">
                       <p className="text-sm text-[var(--text-secondary)] mb-1">Beginning Students</p>
-                      <p className="text-[var(--text-primary)] text-sm whitespace-pre-wrap">{course.rawData.beginningStudents}</p>
+                      <p className="text-[var(--text-primary)] text-sm whitespace-pre-wrap">
+                        {renderTextWithLinks(course.rawData.beginningStudents.replace(/\s*\(GERMAN\)\s*/gi, '').trim())}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -386,7 +420,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
             ) : null}
 
             {/* Additional Information */}
-            {(course.annotation || course.digitalTeaching || course.internationalDoubleDiploma ||
+            {(course.annotation || course.rawData?.targetGroup || course.digitalTeaching || course.internationalDoubleDiploma ||
               (course.furtherLanguages && course.furtherLanguages.length > 0)) ? (
               <section>
                 <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
@@ -394,10 +428,20 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                   Additional Information
                 </h3>
                 <div className="space-y-2">
+                  {course.rawData?.targetGroup && (
+                    <div>
+                      <p className="text-sm text-[var(--text-secondary)] mb-1">Target group</p>
+                      <p className="text-[var(--text-primary)] text-sm">
+                        {renderTextWithLinks(course.rawData.targetGroup)}
+                      </p>
+                    </div>
+                  )}
                   {course.annotation && (
                     <div>
-                      <p className="text-sm text-[var(--text-secondary)] mb-1">Annotation</p>
-                      <p className="text-[var(--text-primary)] text-sm">{course.annotation}</p>
+                      <p className="text-sm text-[var(--text-secondary)] mb-1">Annotation of the Higher Education Institution</p>
+                      <p className="text-[var(--text-primary)] text-sm">
+                        {renderTextWithLinks(course.annotation)}
+                      </p>
                     </div>
                   )}
                   {course.digitalTeaching && (
@@ -427,11 +471,11 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
             ) : null}
 
             {/* Official Page Link at the end */}
-            <div className="pt-4 pb-6 border-t border-[var(--border-color)]">
+            <div className="pt-4 pb-6 border-t border-[var(--border-color)] flex justify-center">
               <Button
                 variant="primary"
                 onClick={() => window.open(course.detailPageUrl, '_blank')}
-                className="w-full"
+                className="w-auto px-4 py-2"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 View Official Page
