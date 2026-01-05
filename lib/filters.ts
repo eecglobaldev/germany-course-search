@@ -172,33 +172,20 @@ export function filterCourses(
       if (!hasMatchingMonth) return false;
     }
 
-    // Intake season filter (OR logic - show courses with intake for selected season)
-    if (filters.selectedIntakeSeasons.length > 0) {
-      let hasMatchingSeason = false;
-      
-      // Check each selected season
-      for (const selectedSeason of filters.selectedIntakeSeasons) {
-        if (selectedSeason === 'summer') {
-          // Include if: intakeSeason is 'summer' or 'all', OR has summer deadline
-          if (course.intakeSeason === 'summer' || 
-              course.intakeSeason === 'all' || 
-              course.deadlineSummer) {
-            hasMatchingSeason = true;
-            break;
-          }
-        } else if (selectedSeason === 'winter') {
-          // Include if: intakeSeason is 'winter' or 'all', OR has winter deadline
-          if (course.intakeSeason === 'winter' || 
-              course.intakeSeason === 'all' || 
-              course.deadlineWinter) {
-            hasMatchingSeason = true;
-            break;
-          }
-        }
+    // Intake season filter (mandatory, single-select)
+    const selectedSeason = filters.selectedIntakeSeason;
+    if (selectedSeason === 'summer') {
+      // Include if: intakeSeason is 'summer' or 'all', OR has summer deadline
+      if (!(course.intakeSeason === 'summer' || 
+            course.intakeSeason === 'all' || 
+            course.deadlineSummer)) {
+        return false;
       }
-      
-      // If no season matches, exclude the course
-      if (!hasMatchingSeason) {
+    } else if (selectedSeason === 'winter') {
+      // Include if: intakeSeason is 'winter' or 'all', OR has winter deadline
+      if (!(course.intakeSeason === 'winter' || 
+            course.intakeSeason === 'all' || 
+            course.deadlineWinter)) {
         return false;
       }
     }

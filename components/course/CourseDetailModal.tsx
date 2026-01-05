@@ -7,9 +7,8 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, MapPin, Calendar, Clock, GraduationCap, DollarSign, FileText } from 'lucide-react';
+import { X, MapPin, Calendar, Clock, GraduationCap, DollarSign, FileText } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
-import Button from '@/components/ui/Button';
 import { renderTextWithLinks } from '@/lib/textUtils';
 import type { ProcessedCourse } from '@/types/course';
 
@@ -145,7 +144,13 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 ) : null}
                 <div>
                   <p className="text-sm text-[var(--text-secondary)] mb-1">Study Type</p>
-                  <p className="font-semibold text-[var(--text-primary)]">{course.studyType || 'Not specified'}</p>
+                  <p className="font-semibold text-[var(--text-primary)]">
+                    {course.studyType 
+                      ? (course.studyType === 'Second cycle' ? 'Masters' : 
+                         course.studyType === 'Undergraduate' ? 'Bachelors' : 
+                         course.studyType)
+                      : 'Not specified'}
+                  </p>
                 </div>
                 <div className="col-span-2">
                   <p className="text-sm text-[var(--text-secondary)] mb-1">Full Degree Name</p>
@@ -230,22 +235,19 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                 </h3>
                 <div className="space-y-2">
                   {course.tuitionModel && course.tuitionModel !== 'unknown' && (
-                    <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
-                      <p className="text-sm font-medium text-[var(--text-secondary)]">Fee</p>
-                      <div className="text-right">
-                        {course.tuitionModel === 'free' && (
-                          <Badge variant="success" size="sm">Free</Badge>
-                        )}
-                        {course.tuitionModel === 'paid' && course.tuitionAmountApprox && (
-                          <p className="text-base font-semibold text-[var(--text-primary)]">
-                            €{course.tuitionAmountApprox.toLocaleString()}/year
-                            {course.tuitionPeriod && ` (per ${course.tuitionPeriod})`}
-                          </p>
-                        )}
-                        {course.tuitionModel === 'paid' && !course.tuitionAmountApprox && (
-                          <p className="text-base font-semibold text-[var(--text-primary)]">Paid (amount not specified)</p>
-                        )}
-                      </div>
+                    <div>
+                      {course.tuitionModel === 'free' && (
+                        <Badge variant="success" size="sm">Free</Badge>
+                      )}
+                      {course.tuitionModel === 'paid' && course.tuitionAmountApprox && (
+                        <p className="text-base font-semibold text-[var(--text-primary)]">
+                          €{course.tuitionAmountApprox.toLocaleString()}/year
+                          {course.tuitionPeriod && ` (per ${course.tuitionPeriod})`}
+                        </p>
+                      )}
+                      {course.tuitionModel === 'paid' && !course.tuitionAmountApprox && (
+                        <p className="text-base font-semibold text-[var(--text-primary)]">Paid (amount not specified)</p>
+                      )}
                     </div>
                   )}
                   {course.tuitionNote && (
@@ -377,7 +379,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                   <Calendar className="h-5 w-5" />
                   Intake Information
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3">
                   {/* Intake Season - show both if both deadlines are present */}
                   {(course.intakeSeason && course.intakeSeason !== 'unknown') || (course.deadlineWinter && course.deadlineSummer) ? (
                     <div>
@@ -408,7 +410,7 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                     </div>
                   )}
                   {course.rawData?.beginningStudents && (
-                    <div className="col-span-2">
+                    <div>
                       <p className="text-sm text-[var(--text-secondary)] mb-1">Beginning Students</p>
                       <p className="text-[var(--text-primary)] text-sm whitespace-pre-wrap">
                         {renderTextWithLinks(course.rawData.beginningStudents.replace(/\s*\(GERMAN\)\s*/gi, '').trim())}
@@ -470,17 +472,6 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
               </section>
             ) : null}
 
-            {/* Official Page Link at the end */}
-            <div className="pt-4 pb-6 border-t border-[var(--border-color)] flex justify-center">
-              <Button
-                variant="primary"
-                onClick={() => window.open(course.detailPageUrl, '_blank')}
-                className="w-auto px-4 py-2"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Official Page
-              </Button>
-            </div>
           </div>
 
             </motion.div>

@@ -28,7 +28,7 @@ type FilterAction =
   | { type: 'SET_GRADE_NOT_SPECIFIED'; payload: boolean }
   | { type: 'SET_DURATION'; payload: [number, number] }
   | { type: 'SET_INTAKE_MONTHS'; payload: string[] }
-  | { type: 'SET_INTAKE_SEASONS'; payload: string[] }
+  | { type: 'SET_INTAKE_SEASON'; payload: 'winter' | 'summer' }
   | { type: 'SET_CITIES'; payload: string[] }
   | { type: 'SET_UNIVERSITIES'; payload: string[] }
   | { type: 'SET_SORT'; payload: { by: FilterState['sortBy']; order: FilterState['sortOrder'] } }
@@ -75,8 +75,8 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
       return { ...state, durationRange: action.payload, page: 1 };
     case 'SET_INTAKE_MONTHS':
       return { ...state, selectedIntakeMonths: action.payload, page: 1 };
-    case 'SET_INTAKE_SEASONS':
-      return { ...state, selectedIntakeSeasons: action.payload, page: 1 };
+    case 'SET_INTAKE_SEASON':
+      return { ...state, selectedIntakeSeason: action.payload, page: 1 };
     case 'SET_CITIES':
       return { ...state, selectedCities: action.payload, page: 1 };
     case 'SET_UNIVERSITIES':
@@ -174,8 +174,8 @@ export function useCourseFilters(initialState?: Partial<FilterState>) {
     dispatch({ type: 'SET_INTAKE_MONTHS', payload: months });
   }, []);
 
-  const setIntakeSeasons = useCallback((seasons: string[]) => {
-    dispatch({ type: 'SET_INTAKE_SEASONS', payload: seasons });
+  const setIntakeSeason = useCallback((season: 'winter' | 'summer') => {
+    dispatch({ type: 'SET_INTAKE_SEASON', payload: season });
   }, []);
 
   const setCities = useCallback((cities: string[]) => {
@@ -221,7 +221,7 @@ export function useCourseFilters(initialState?: Partial<FilterState>) {
     setGradeNotSpecified,
     setDuration,
     setIntakeMonths,
-    setIntakeSeasons,
+    setIntakeSeason,
     setCities,
     setUniversities,
     setSort,

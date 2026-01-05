@@ -10,15 +10,17 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import CourseBadges from './CourseBadges';
+import DeadlineBand from './DeadlineBand';
 import type { ProcessedCourse } from '@/types/course';
 
 interface CourseCardProps {
   course: ProcessedCourse;
   onExpand?: (course: ProcessedCourse) => void;
   index?: number;
+  selectedSemester: 'winter' | 'summer';
 }
 
-export default function CourseCard({ course, onExpand, index = 0 }: CourseCardProps) {
+export default function CourseCard({ course, onExpand, index = 0, selectedSemester }: CourseCardProps) {
   const handleCardClick = () => {
     if (onExpand) {
       onExpand(course);
@@ -35,6 +37,8 @@ export default function CourseCard({ course, onExpand, index = 0 }: CourseCardPr
     >
       {/* Card Container */}
       <div className="bg-[var(--bg-card)] rounded-2xl p-6 h-full flex flex-col border border-[var(--border-color)] hover:border-purple-300/50 dark:hover:border-purple-500/30 shadow-lg hover:shadow-2xl transition-all duration-500 relative overflow-hidden min-h-[400px] group/card">
+        {/* Deadline Band */}
+        <DeadlineBand course={course} selectedSemester={selectedSemester} />
         {/* Gradient background on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-50/0 via-blue-50/0 to-pink-50/0 group-hover/card:from-purple-50/50 group-hover/card:via-blue-50/30 group-hover/card:to-pink-50/50 dark:group-hover/card:from-purple-900/10 dark:group-hover/card:via-blue-900/10 dark:group-hover/card:to-pink-900/10 transition-all duration-500 rounded-2xl"></div>
 
@@ -105,17 +109,44 @@ export default function CourseCard({ course, onExpand, index = 0 }: CourseCardPr
             <CourseBadges course={course} />
           </div>
 
-          {/* Intake Months */}
+          {/* Intake Semester */}
           <div className="mb-4 min-h-[1.5rem]">
-            {course.intakeMonths && course.intakeMonths.length > 0 ? (
-              <div className="text-xs">
-                <span className="text-[var(--text-secondary)]">
-                  <span className="font-medium text-[var(--text-primary)]">Intake Months:</span> {course.intakeMonths.join(', ')}
-                </span>
-              </div>
-            ) : (
-              <div className="text-xs text-[var(--text-muted)] italic">Intake months not specified</div>
-            )}
+            {(() => {
+              // Check if both winter and summer deadlines exist
+              const hasBothSeasons = course.deadlineWinter && course.deadlineSummer;
+              // Check intake season
+              const intakeSeason = course.intakeSeason;
+              
+              if (hasBothSeasons || intakeSeason === 'all') {
+                return (
+                  <div className="text-xs">
+                    <span className="text-[var(--text-secondary)]">
+                      <span className="font-medium text-[var(--text-primary)]">Intake Semester:</span> Winter & Summer
+                    </span>
+                  </div>
+                );
+              } else if (intakeSeason === 'winter' || course.deadlineWinter) {
+                return (
+                  <div className="text-xs">
+                    <span className="text-[var(--text-secondary)]">
+                      <span className="font-medium text-[var(--text-primary)]">Intake Semester:</span> Winter
+                    </span>
+                  </div>
+                );
+              } else if (intakeSeason === 'summer' || course.deadlineSummer) {
+                return (
+                  <div className="text-xs">
+                    <span className="text-[var(--text-secondary)]">
+                      <span className="font-medium text-[var(--text-primary)]">Intake Semester:</span> Summer
+                    </span>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="text-xs text-[var(--text-muted)] italic">Intake semester not specified</div>
+                );
+              }
+            })()}
           </div>
 
           {/* Spacer */}

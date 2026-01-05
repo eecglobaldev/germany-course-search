@@ -29,7 +29,7 @@ export interface FilterState {
   gradeNotSpecified: boolean; // Show courses without grade requirement
   durationRange: [number, number];
   selectedIntakeMonths: string[];
-  selectedIntakeSeasons: string[]; // 'winter' | 'summer' | 'all'
+  selectedIntakeSeason: 'winter' | 'summer'; // Single-select, mandatory
   selectedCities: string[];
   selectedUniversities: string[];
   
@@ -51,7 +51,7 @@ export const DEFAULT_FILTER_STATE: FilterState = {
   tuitionModel: 'all',
   durationRange: [1, 20], // 1 to 20 semesters
   selectedIntakeMonths: [],
-  selectedIntakeSeasons: [],
+  selectedIntakeSeason: 'summer', // Mandatory, default to summer
   selectedCities: [],
   selectedUniversities: [],
   ieltsScores: [],

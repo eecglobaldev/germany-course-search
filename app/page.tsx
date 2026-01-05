@@ -9,12 +9,13 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useCourseData } from '@/hooks/useCourseData';
 import { useCourseFilters } from '@/hooks/useCourseFilters';
 import { usePagination } from '@/hooks/usePagination';
-import { filterCourses, sortCourses } from '@/lib/filters';
+import { filterCourses } from '@/lib/filters';
 import { searchCourses } from '@/lib/search';
+import { sortByDeadlineBand } from '@/lib/deadlineSort';
 import Sidebar from '@/components/layout/Sidebar';
 import SearchBar from '@/components/filters/SearchBar';
-import SortDropdown from '@/components/filters/SortDropdown';
 import MultiSelectFilter from '@/components/filters/MultiSelectFilter';
+import IntakeSeasonFilter from '@/components/filters/IntakeSeasonFilter';
 import EnglishExamFilter from '@/components/filters/EnglishExamFilter';
 import GradeFilter from '@/components/filters/GradeFilter';
 import CourseGrid from '@/components/course/CourseGrid';
@@ -50,7 +51,7 @@ export default function Home() {
     setTOEICScore,
     setGradeScore,
     setGradeNotSpecified,
-    setIntakeSeasons,
+    setIntakeSeason,
     setCities,
     setUniversities,
     setSort,
@@ -171,8 +172,8 @@ export default function Home() {
     // Step 2: Apply filters
     result = filterCourses(result, filters);
 
-    // Step 3: Apply sorting
-    result = sortCourses(result, filters.sortBy, filters.sortOrder);
+    // Step 3: Sort by deadline band priority
+    result = sortByDeadlineBand(result, filters.selectedIntakeSeason);
 
     return result;
   }, [courses, filters, loading, error]);
@@ -268,12 +269,9 @@ export default function Home() {
           />
 
           {/* Intake Season Filter */}
-          <MultiSelectFilter
-            title="Intake Season"
-            options={['winter', 'summer']}
-            selectedValues={filters.selectedIntakeSeasons}
-            onChange={setIntakeSeasons}
-            displayMap={{ 'winter': 'Winter', 'summer': 'Summer' }}
+          <IntakeSeasonFilter
+            selectedSeason={filters.selectedIntakeSeason}
+            onChange={setIntakeSeason}
           />
 
           {/* Grade Filter */}
@@ -377,15 +375,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Sort Dropdown and Results Info */}
+          {/* Results Info */}
           <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4">
-              <SortDropdown
-                value={filters.sortBy}
-                sortOrder={filters.sortOrder}
-                onChange={(sortBy, sortOrder) => setSort(sortBy, sortOrder)}
-              />
-            </div>
             <div className="flex items-center gap-4">
               <p className="text-sm text-[var(--text-secondary)]">
                 Showing <span className="font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">{filteredCourses.length.toLocaleString()}</span> of{' '}
@@ -412,7 +403,11 @@ export default function Home() {
             />
           ) : (
             <>
-              <CourseGrid courses={paginatedCourses} onExpand={handleExpandCourse} />
+              <CourseGrid 
+                courses={paginatedCourses} 
+                onExpand={handleExpandCourse}
+                selectedSemester={filters.selectedIntakeSeason}
+              />
 
               {/* Course Detail Modal */}
               <CourseDetailModal
