@@ -149,6 +149,48 @@ export default function CourseCard({ course, onExpand, index = 0, selectedSemest
             })()}
           </div>
 
+          {/* Deadlines - Show all available */}
+          {(() => {
+            const deadlines: Array<{ season: string; text: string }> = [];
+            
+            if (course.deadlineWinter) {
+              const cleanDeadline = course.deadlineWinter
+                .replace(/^Bewerbungsfrist Nicht-EU-Ausländer;\s*/i, '')
+                .trim();
+              deadlines.push({ season: 'Winter', text: cleanDeadline });
+            }
+            
+            if (course.deadlineSummer) {
+              const cleanDeadline = course.deadlineSummer
+                .replace(/^Bewerbungsfrist Nicht-EU-Ausländer;\s*/i, '')
+                .trim();
+              deadlines.push({ season: 'Summer', text: cleanDeadline });
+            }
+            
+            if (deadlines.length > 0) {
+              return (
+                <div className="mb-4 space-y-1">
+                  {deadlines.map((deadline, idx) => {
+                    // Truncate if too long (for card display)
+                    const displayDeadline = deadline.text.length > 60 
+                      ? deadline.text.substring(0, 57) + '...'
+                      : deadline.text;
+                    
+                    return (
+                      <div key={idx} className="text-xs">
+                        <span className="text-[var(--text-secondary)]">
+                          <span className="font-medium text-[var(--text-primary)]">Deadline ({deadline.season}):</span> {displayDeadline}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            } else {
+              return null;
+            }
+          })()}
+
           {/* Spacer */}
           <div className="flex-grow"></div>
 
