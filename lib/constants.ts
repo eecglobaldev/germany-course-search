@@ -31,6 +31,13 @@ export const DEGREE_TYPES = ['Arts', 'Science', 'Engineering', 'Business', 'Educ
 export const STUDY_TYPES = ['Second cycle', 'Undergraduate'] as const;
 export const STUDY_MODES = ['full-time', 'international course'] as const;
 export const ADMISSION_MODES = ['Open', 'NC Restricted', 'Aptitude Test'] as const;
+
+// Display mapping for admission modes
+export const ADMISSION_MODE_DISPLAY: Record<string, string> = {
+  'Open': 'Less Competitive',
+  'NC Restricted': 'Very Competitive',
+  'Aptitude Test': 'Aptitude test required',
+};
 export const TUITION_MODELS = ['all', 'free', 'paid'] as const;
 
 // Months for intake filter

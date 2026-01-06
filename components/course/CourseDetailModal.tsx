@@ -10,15 +10,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Calendar, Clock, GraduationCap, DollarSign, FileText } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import { renderTextWithLinks } from '@/lib/textUtils';
+import { getSemesterDeadlineStatus } from '@/lib/deadlineUtils';
 import type { ProcessedCourse } from '@/types/course';
 
 interface CourseDetailModalProps {
   course: ProcessedCourse | null;
   isOpen: boolean;
   onClose: () => void;
+  selectedSemester?: 'winter' | 'summer';
 }
 
-export default function CourseDetailModal({ course, isOpen, onClose }: CourseDetailModalProps) {
+export default function CourseDetailModal({ course, isOpen, onClose, selectedSemester = 'summer' }: CourseDetailModalProps) {
   // Handle Escape key press
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -95,31 +97,101 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
           {/* Content */}
           <div className="px-4 py-3 space-y-5">
             {/* Admission Mode - Prominent Display */}
-            {course.admissionMode && (
-              <section className="bg-[var(--bg-card)] rounded-lg p-4 border border-[var(--border-color)]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Admission Mode</p>
-                    <p className="text-base text-[var(--text-primary)]">
-                      {course.admissionMode === 'Open' && 'Open Admission - No restrictions'}
-                      {course.admissionMode === 'NC Restricted' && 'NC Restricted - Numerus Clausus (limited places)'}
-                      {course.admissionMode === 'Aptitude Test' && 'Aptitude Test Required'}
-                    </p>
+            {course.admissionMode && (() => {
+              // Get deadline status to match band colors
+              const deadlineInfo = getSemesterDeadlineStatus(
+                course.deadlineWinter,
+                course.deadlineSummer,
+                selectedSemester
+              );
+              const status = deadlineInfo.status;
+              const admissionMode = course.admissionMode;
+
+              // Determine pill color based on deadline status and admission mode (matching DeadlineBand)
+              let pillColor = '';
+              let pillStyle: React.CSSProperties = {};
+              let pillText = '';
+
+              if (status === 'passed') {
+                // Deadline passed: red pill
+                pillColor = 'bg-red-500';
+                pillText = 'Deadline Passed';
+              } else if (status === 'no_deadline') {
+                // No deadline: half black + half color based on admission mode
+                if (admissionMode === 'Open') {
+                  pillStyle = {
+                    background: 'linear-gradient(to right, #000000 50%, #22c55e 50%)',
+                  };
+                  pillText = 'Less Competitive';
+                } else if (admissionMode === 'NC Restricted') {
+                  pillStyle = {
+                    background: 'linear-gradient(to right, #000000 50%, #eab308 50%)',
+                  };
+                  pillText = 'Very Competitive';
+                } else if (admissionMode === 'Aptitude Test') {
+                  pillStyle = {
+                    background: 'linear-gradient(to right, #000000 50%, #a855f7 50%)',
+                  };
+                  pillText = 'Aptitude test required';
+                } else {
+                  pillColor = 'bg-gray-500';
+                  pillText = admissionMode;
+                }
+              } else if (status === 'not_passed') {
+                // Deadline not passed: color based on admission mode
+                if (admissionMode === 'Open') {
+                  pillColor = 'bg-green-500';
+                  pillText = 'Less Competitive';
+                } else if (admissionMode === 'NC Restricted') {
+                  pillColor = 'bg-yellow-500';
+                  pillText = 'Very Competitive';
+                } else if (admissionMode === 'Aptitude Test') {
+                  pillColor = 'bg-purple-500';
+                  pillText = 'Aptitude test required';
+                } else {
+                  pillColor = 'bg-gray-500';
+                  pillText = admissionMode;
+                }
+              } else {
+                // Fallback
+                pillColor = 'bg-gray-500';
+                pillText = admissionMode || 'Unknown';
+              }
+
+              return (
+                <section className="bg-[var(--bg-card)] rounded-lg p-4 border border-[var(--border-color)]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Admission Mode</p>
+                      <p className="text-base text-[var(--text-primary)]">
+                        {course.admissionMode === 'Open' && 'Less Competitive - No restrictions'}
+                        {course.admissionMode === 'NC Restricted' && 'Very Competitive - Numerus Clausus (limited places)'}
+                        {course.admissionMode === 'Aptitude Test' && 'Aptitude test required'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {/* Colored pill matching deadline band */}
+                      <span
+                        className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-sm ${pillColor}`}
+                        style={pillStyle}
+                      >
+                        {pillText}
+                      </span>
+                      {/* Existing badge */}
+                      {course.admissionMode === 'Open' && (
+                        <Badge variant="success" size="md">Less Competitive</Badge>
+                      )}
+                      {course.admissionMode === 'NC Restricted' && (
+                        <Badge variant="warning" size="md">Very Competitive</Badge>
+                      )}
+                      {course.admissionMode === 'Aptitude Test' && (
+                        <Badge variant="default" size="md">Aptitude test required</Badge>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    {course.admissionMode === 'Open' && (
-                      <Badge variant="success" size="md">Open Admission</Badge>
-                    )}
-                    {course.admissionMode === 'NC Restricted' && (
-                      <Badge variant="warning" size="md">NC Restricted</Badge>
-                    )}
-                    {course.admissionMode === 'Aptitude Test' && (
-                      <Badge variant="default" size="md">Aptitude Test Required</Badge>
-                    )}
-                  </div>
-                </div>
-              </section>
-            )}
+                </section>
+              );
+            })()}
 
             {/* Degree Information */}
             <section>
@@ -268,13 +340,13 @@ export default function CourseDetailModal({ course, isOpen, onClose }: CourseDet
                   <div>
                     <p className="text-sm text-[var(--text-secondary)] mb-1">Admission Mode</p>
                     {course.admissionMode === 'Open' && (
-                      <Badge variant="success" size="sm">Open Admission</Badge>
+                      <Badge variant="success" size="sm">Less Competitive</Badge>
                     )}
                     {course.admissionMode === 'NC Restricted' && (
-                      <Badge variant="warning" size="sm">NC Restricted</Badge>
+                      <Badge variant="warning" size="sm">Very Competitive</Badge>
                     )}
                     {course.admissionMode === 'Aptitude Test' && (
-                      <Badge variant="default" size="sm">Aptitude Test Required</Badge>
+                      <Badge variant="default" size="sm">Aptitude test required</Badge>
                     )}
                   </div>
                 )}

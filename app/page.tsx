@@ -136,12 +136,12 @@ export default function Home() {
     return Array.from(citySet).sort();
   }, [courses, loading, error]);
 
-  // Extract unique universities from courses
+  // Extract unique universities from courses (excluding IU International University)
   const uniqueUniversities = useMemo(() => {
     if (loading || error || courses.length === 0) return [];
     const universitySet = new Set<string>();
     courses.forEach((course) => {
-      if (course.university) {
+      if (course.university && !course.university.toLowerCase().includes('iu international')) {
         universitySet.add(course.university);
       }
     });
@@ -248,6 +248,11 @@ export default function Home() {
             options={ADMISSION_MODES}
             selectedValues={filters.selectedAdmissionModes}
             onChange={setAdmissionModes}
+            displayMap={{
+              'Open': 'Less Competitive',
+              'NC Restricted': 'Very Competitive',
+              'Aptitude Test': 'Aptitude test required',
+            }}
           />
 
           {/* Location Filter */}
@@ -414,6 +419,7 @@ export default function Home() {
                 course={selectedCourse}
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
+                selectedSemester={filters.selectedIntakeSeason}
               />
 
               {/* Pagination */}

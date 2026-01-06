@@ -14,9 +14,12 @@ const fuseOptions = {
     { name: 'subjectDisplay', weight: 0.2 },
     { name: 'areasOfConcentration', weight: 0.1 },
   ],
-  threshold: 0.4, // 0 = exact match, 1 = match anything (slightly more lenient)
+  threshold: 0.3, // Lower threshold for more lenient matching (0 = exact, 1 = match anything)
   includeScore: true,
   minMatchCharLength: 2,
+  ignoreLocation: true, // Match anywhere in the string, not just at the beginning
+  findAllMatches: true, // Find all matches, not just the first one
+  shouldSort: true, // Sort results by relevance score
 };
 
 let fuseInstance: Fuse<ProcessedCourse> | null = null;

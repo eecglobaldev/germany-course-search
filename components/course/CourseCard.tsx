@@ -80,13 +80,13 @@ export default function CourseCard({ course, onExpand, index = 0, selectedSemest
                 <>
                   <span className="text-[var(--text-muted)]">•</span>
                   {course.admissionMode === 'Open' && (
-                    <Badge variant="success" size="sm">Open Admission</Badge>
+                    <Badge variant="success" size="sm">Less Competitive</Badge>
                   )}
                   {course.admissionMode === 'NC Restricted' && (
-                    <Badge variant="warning" size="sm">NC Restricted</Badge>
+                    <Badge variant="warning" size="sm">Very Competitive</Badge>
                   )}
                   {course.admissionMode === 'Aptitude Test' && (
-                    <Badge variant="default" size="sm">Aptitude Test</Badge>
+                    <Badge variant="default" size="sm">Aptitude test required</Badge>
                   )}
                 </>
               )}

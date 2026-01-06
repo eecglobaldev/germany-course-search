@@ -15,6 +15,11 @@ export function filterCourses(
   filters: FilterState
 ): ProcessedCourse[] {
   return courses.filter((course) => {
+    // Exclude IU International University courses (case-insensitive, handles variations like "IU International University of Applied Sciences")
+    if (course.university && course.university.toLowerCase().includes('iu international')) {
+      return false;
+    }
+
     // Subject filter (OR logic) - consolidated study fields (broadCategories)
     if (filters.selectedSubjects.length > 0) {
       const categories = course.broadCategories ?? [];
